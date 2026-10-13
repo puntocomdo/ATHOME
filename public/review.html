@@ -1,0 +1,22 @@
+<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Review words</title>
+<style>body{font-family:system-ui,sans-serif;max-width:900px;margin:auto;padding:12px}.c{display:flex;gap:12px;border:2px solid #ccc;border-radius:12px;padding:10px;margin:10px 0}.c.ok{border-color:#3aa35c;background:#eefaf1}.c>img{width:150px;height:150px;object-fit:cover;border-radius:8px;background:#eee;flex:none}textarea,input.q{width:100%;box-sizing:border-box;margin:3px 0}.t img{width:72px;height:72px;object-fit:cover;cursor:pointer;margin:2px;border-radius:6px}button{padding:6px 12px}</style>
+<h2>Review words</h2>
+<div>Language <select id=l><option>ENGLISH<option>SPANISH</select> Grade <select id=g><option>1<option>2<option>3<option>4<option>5</select>
+<label><input type=checkbox id=u checked> only not approved</label> <button onclick=load()>Show</button> <a href=/export.csv>Download sheet</a> <span id=cnt></span></div>
+<div id=o></div><p>Photos provided by <a href="https://www.pexels.com">Pexels</a></p>
+<script>
+const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+async function load(){const q=new URLSearchParams({lang:l.value,grade:g.value,unapproved:u.checked?1:0});const items=await(await fetch('/api/list?'+q)).json();
+ o.innerHTML='';items.slice(0,40).forEach(draw);cnt.textContent=items.length+' words (showing first 40)'}
+function draw(it){const d=document.createElement('div');d.className='c'+(it.approved?' ok':'');
+ d.innerHTML=`<img src="${it.photo?'/photos/'+it.photo:''}" alt=""><div style="flex:1"><b style="font-size:20px">${esc(it.word)}</b> <small>grade ${it.grade}</small>
+ <textarea rows=2 class=d placeholder="Definition">${esc(it.def)}</textarea><textarea rows=2 class=s placeholder="Sentence">${esc(it.sent)}</textarea>
+ <input class=q value="${esc(it.query)}" placeholder="photo search (English)"> <label><input type=checkbox class=sg ${it.sight?'checked':''}> no photo (sight word)</label>
+ <button class=f>Find photos</button> <button class=a>Approve</button><div class=t></div></div>`;
+ const $=x=>d.querySelector(x);
+ $('.f').onclick=async()=>{const r=await(await fetch('/api/photos?q='+encodeURIComponent($('.q').value))).json();$('.t').innerHTML='';
+  r.forEach(p=>{const i=document.createElement('img');i.src=p.thumb;i.onclick=async()=>{const x=await(await fetch('/api/pick',{method:'POST',body:JSON.stringify({key:it.key,...p})})).json();d.querySelector('img').src='/photos/'+x.file;$('.sg').checked=false;$('.t').innerHTML=''};$('.t').appendChild(i)})};
+ $('.a').onclick=async()=>{await fetch('/api/save',{method:'POST',body:JSON.stringify({key:it.key,def:$('.d').value,sent:$('.s').value,sight:$('.sg').checked,approved:true})});d.classList.add('ok')};
+ o.appendChild(d)}
+load()
+</script>

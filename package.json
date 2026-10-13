@@ -1,0 +1,1 @@
+{"name":"vocab-builder","version":"1.0.0","scripts":{"enrich":"node enrich.js","review":"node server.js"}}
