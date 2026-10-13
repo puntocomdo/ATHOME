@@ -13,3 +13,4 @@ The definitions and sentences are already in data/words.csv. To add photos only,
 `PHOTOS_ONLY=1 node enrich.js` - it searches each word (Spanish words are searched in Spanish) and saves the photos. Pixabay allows about 100 requests per minute, so thousands of words take under an hour. Then `node server.js` to review. Pixabay's rules: download the photos (this tool does) and do not link to their web addresses directly from the app.
 
 The student app (index.html) lives in public/ and opens at your Repl address. The review screen is at /review.html.
+hola klk
