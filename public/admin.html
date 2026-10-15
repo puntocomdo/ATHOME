@@ -1,0 +1,20 @@
+<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Approve students</title>
+<style>body{font-family:system-ui,sans-serif;max-width:1000px;margin:auto;padding:12px}.r{border:2px solid #ccc;border-radius:12px;padding:10px;margin:10px 0}.late{border-color:#e07a10;background:#fff6ea}.ok{border-color:#3aa35c;background:#eefaf1}.no{border-color:#bbb;background:#f4f4f4}button{padding:6px 12px;margin:2px}input,select{padding:5px}small{color:#666}a.b{display:inline-block;padding:6px 12px;margin:2px;border:1px solid #333;border-radius:6px;text-decoration:none;color:#000;font-size:14px}</style>
+<h2>Sign-up requests</h2><button onclick=load()>Refresh</button><div id=q></div>
+<script>
+let all=[];const ORG=location.origin,H=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+const msg=r=>`Hola ${r.parent}, la cuenta de ${r.child} fue aprobada.\nUsuario: ${r.username}\nPIN: ${r.pin}\nEntra en: ${ORG}\nVálida por 1 año.\n\nHello ${r.parent}, ${r.child}'s account is approved.\nUsername: ${r.username}\nPIN: ${r.pin}\nOpen: ${ORG}\nValid for 1 year.`;
+async function load(){all=await(await fetch('/api/requests')).json();draw()}
+function draw(){const p=all.filter(r=>r.status=='pending'),o=all.filter(r=>r.status!='pending');q.innerHTML='<h3>Waiting ('+p.length+')</h3>'+(p.map(card).join('')||'<p>Nothing waiting.</p>')+'<h3>Approved and rejected</h3>'+o.map(card).join('')}
+function card(r){const h=((Date.now()-r.created)/36e5).toFixed(0),d=r.contact.replace(/\D/g,'');let a='';
+ if(r.status=='pending')a=`<div>Grade <select id="g${r.id}">${[1,2,3,4,5].map(n=>`<option ${n==r.grade?'selected':''}>${n}</option>`).join('')}</select> School <input id="s${r.id}" value="${H(r.school)}"> <button onclick="ap('${r.id}')">Approve</button> <button onclick="rj('${r.id}')">Reject</button></div>`;
+ else if(r.status=='approved'){const m=encodeURIComponent(msg(r));a=`<div><b>${H(r.username)}</b> · PIN ${H(r.pin||'')} · valid until ${new Date(r.exp).toLocaleDateString()}</div>${/@/.test(r.contact)?`<a class=b href="mailto:${H(r.contact)}?subject=Cuenta aprobada&body=${m}">Email the parent</a>`:''}${d.length>=8?`<a class=b href="https://wa.me/${d}?text=${m}" target=_blank>WhatsApp the parent</a>`:''}<button onclick="cp('${r.id}')">Copy message</button><button onclick="rn('${r.id}')">Renew +1 year</button>`}
+ else a='<div>Rejected: '+H(r.reason)+'</div>';
+ return `<div class="r ${r.status=='approved'?'ok':r.status=='rejected'?'no':h>=24?'late':''}"><b>${H(r.child)}</b> (grade ${r.grade}, ${H(r.school)}) · parent ${H(r.parent)} · ${H(r.contact)}<br><small>code ${r.id} · sent ${h} h ago${r.status=='pending'&&h>=24?' · OVER 24 HOURS':''}</small>${a}</div>`}
+const post=async(u,b)=>(await fetch(u,{method:'POST',body:JSON.stringify(b)})).json();
+async function ap(id){const j=await post('/api/approve',{id,grade:document.getElementById('g'+id).value,school:document.getElementById('s'+id).value});alert('Approved. Username '+j.username+', PIN '+j.pin+(j.emailed?' (email sent)':' - use the Email or WhatsApp button to tell the parent.'));load()}
+async function rj(id){const r=prompt('Reason (optional)');if(r===null)return;await post('/api/reject',{id,reason:r});load()}
+async function rn(id){await post('/api/renew',{id});load()}
+function cp(id){navigator.clipboard.writeText(msg(all.find(r=>r.id==id)));alert('Copied')}
+load()
+</script>
