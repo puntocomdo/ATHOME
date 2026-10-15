@@ -31,3 +31,5 @@ Important: a file on disk is fine while you test with Run. A published (deployed
 - The app login now asks for username + PIN and checks them on the server (expired or unapproved accounts cannot log in). Progress is saved only with the student's private token.
 - Before launch set DEMO to false at the top of index.html so the demo usernames stop working.
 - Accounts are saved in DATA_DIR/accounts.json. Keep DATA_DIR outside the app folder. Login requires the 4-digit PIN (checked on the server, rate limited). PINs are stored as plain text so parents can look them up; hashing them would need a "reset PIN" flow instead.
+
+- Deploy
