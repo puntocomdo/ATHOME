@@ -1,6 +1,6 @@
 // Sign-up requests, approval, login with PIN. Data: DATA_DIR/accounts.json
-const fs=require('fs'),crypto=require('crypto'),DD=process.env.DATA_DIR||__dirname+'/data',F=DD+'/accounts.json',DAY=864e5;
-const read=()=>{try{return JSON.parse(fs.readFileSync(F,'utf8'))}catch(e){return[]}},write=a=>fs.writeFileSync(F,JSON.stringify(a,null,1));
+const fs=require('fs'),crypto=require('crypto'),DD=process.env.DATA_DIR||(process.env.VERCEL?'/tmp/vocab-data':__dirname+'/data'),F=DD+'/accounts.json',DAY=864e5;
+const read=()=>{try{return JSON.parse(fs.readFileSync(F,'utf8'))}catch(e){return[]}},write=a=>{try{fs.mkdirSync(DD,{recursive:true});fs.writeFileSync(F,JSON.stringify(a,null,1))}catch(e){console.log('save skipped:',e.code)}};
 const rnd=n=>crypto.randomBytes(n).toString('hex'),hits={};
 const limited=(k,max,ms)=>{const n=Date.now();hits[k]=(hits[k]||[]).filter(t=>n-t<ms);if(hits[k].length>=max)return true;hits[k].push(n);return false};
 const slug=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z]/g,'').slice(0,12)||'student';
