@@ -1,5 +1,5 @@
-const fs=require('fs'),crypto=require('crypto'),SRC=__dirname+'/data/',D=process.env.VERCEL?'/tmp/vocab-data/':SRC,PH=process.env.VERCEL?'/tmp/photos/':__dirname+'/public/photos/';
-try{fs.mkdirSync(D,{recursive:true})}catch(e){}
+require('./loadenv');
+const fs=require('fs'),crypto=require('crypto'),D=__dirname+'/data/',PH=__dirname+'/public/photos/';
 exports.parseCsv=t=>{const rows=[];let r=[],c='',q=false;t=t.replace(/^\uFEFF/,'');
  for(let i=0;i<t.length;i++){const ch=t[i];
   if(q){if(ch=='"'&&t[i+1]=='"'){c+='"';i++}else if(ch=='"')q=false;else c+=ch}
@@ -7,13 +7,13 @@ exports.parseCsv=t=>{const rows=[];let r=[],c='',q=false;t=t.replace(/^\uFEFF/,'
   else if(ch=='\n'||ch=='\r'){if(ch=='\r'&&t[i+1]=='\n')i++;r.push(c);c='';if(r.some(x=>x))rows.push(r);r=[]}else c+=ch}
  if(c||r.length){r.push(c);rows.push(r)}return rows};
 exports.toCsv=rows=>rows.map(r=>r.map(x=>/[",\n]/.test(String(x))?'"'+String(x).replace(/"/g,'""')+'"':x).join(',')).join('\n');
-exports.words=()=>exports.parseCsv(fs.readFileSync(SRC+'words.csv','utf8')).slice(1).map(x=>({grade:x[0],school:x[1],uw:x[2],word:x[3],lang:(x[4]||'').trim().toUpperCase(),def:x[5]||'',sent:x[6]||''}));
+exports.words=()=>exports.parseCsv(fs.readFileSync(D+'words.csv','utf8')).slice(1).map(x=>({grade:x[0],school:x[1],uw:x[2],word:x[3],lang:(x[4]||'').trim().toUpperCase(),def:x[5]||'',sent:x[6]||''}));
 exports.key=(lang,word)=>lang.toUpperCase()+'|'+word.toLowerCase();
 exports.init=()=>{let db={};try{db=JSON.parse(fs.readFileSync(D+'db.json','utf8'))}catch(e){}
  for(const w of exports.words().sort((a,b)=>a.grade-b.grade)){const k=exports.key(w.lang,w.word);
   if(!db[k])db[k]={word:w.word.toLowerCase(),lang:w.lang,grade:w.grade,def:w.def,sent:w.sent,query:'',sight:false,photo:'',by:'',url:'',done:false,approved:false}}
  exports.save(db);return db};
-exports.save=db=>{try{fs.writeFileSync(D+'db.json',JSON.stringify(db,null,1))}catch(e){console.log('save skipped:',e.code)}};
+exports.save=db=>fs.writeFileSync(D+'db.json',JSON.stringify(db,null,1));
 exports.sleep=ms=>new Promise(r=>setTimeout(r,ms));
 exports.pexels=async(q,lang)=>{
  if(process.env.PIXABAY_API_KEY){const r=await fetch('https://pixabay.com/api/?key='+process.env.PIXABAY_API_KEY+'&image_type=photo&safesearch=true&per_page=8&lang='+(lang=='SPANISH'?'es':'en')+'&q='+encodeURIComponent(q));

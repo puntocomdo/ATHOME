@@ -2,9 +2,10 @@
 <style>body{font-family:system-ui,sans-serif;max-width:900px;margin:auto;padding:12px}.c{display:flex;gap:12px;border:2px solid #ccc;border-radius:12px;padding:10px;margin:10px 0}.c.ok{border-color:#3aa35c;background:#eefaf1}.c>img{width:150px;height:150px;object-fit:cover;border-radius:8px;background:#eee;flex:none}textarea,input.q{width:100%;box-sizing:border-box;margin:3px 0}.t img{width:72px;height:72px;object-fit:cover;cursor:pointer;margin:2px;border-radius:6px}button{padding:6px 12px}</style>
 <h2>Review words</h2>
 <div>Language <select id=l><option>ENGLISH<option>SPANISH</select> Grade <select id=g><option>1<option>2<option>3<option>4<option>5</select>
-<label><input type=checkbox id=u checked> only not approved</label> <button onclick=load()>Show</button> <a href=/export.csv>Download sheet</a> <span id=cnt></span></div>
+<label><input type=checkbox id=u checked> only not approved</label> <button onclick=load()>Show</button> <a href="#" onclick="this.href='/export.csv?t='+encodeURIComponent(localStorage.getItem('adm_tk')||'')">Download sheet</a> <span id=cnt></span></div>
 <div id=o></div><p>Photos provided by <a href="https://www.pexels.com">Pexels</a></p>
 <script>
+const _f=window.fetch.bind(window);window.fetch=(u,o={})=>{o.headers=Object.assign({'x-admin-token':localStorage.getItem('adm_tk')||''},o.headers||{});return _f(u,o).then(r=>{if(r.status==401){location='/admin.html'}return r})};
 const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
 async function load(){const q=new URLSearchParams({lang:l.value,grade:g.value,unapproved:u.checked?1:0});const items=await(await fetch('/api/list?'+q)).json();
  o.innerHTML='';items.slice(0,40).forEach(draw);cnt.textContent=items.length+' words (showing first 40)'}
