@@ -6,6 +6,9 @@ Spanish setup guide: see LEEME.md.
 - server.js + accounts.js + db.js: the server. Storage is Supabase when SUPABASE_URL and SUPABASE_SERVICE_KEY are set (see supabase/schema.sql), otherwise local files for testing.
 - enrich.js: photo tool. Reads PIXABAY_API_KEY (or PEXELS_API_KEY) from the environment or from a local .env file.
 
+## Hosting
+Vercel: static files in public/ + one serverless function (api/handler.js, routes in routes.js). Database: Supabase (tables already created; see supabase/schema.sql). The photo tool and review screen (tools/review.html) run only on your own computer with `node server.js`.
+
 ## Environment variables (see .env.example)
 ADMIN_CODE, SUPABASE_URL, SUPABASE_SERVICE_KEY, PIXABAY_API_KEY, and optionally RESEND_API_KEY + MAIL_FROM for automatic approval emails.
 

@@ -18,7 +18,7 @@ exports.sleep=ms=>new Promise(r=>setTimeout(r,ms));
 exports.pexels=async(q,lang)=>{
  if(process.env.PIXABAY_API_KEY){const r=await fetch('https://pixabay.com/api/?key='+process.env.PIXABAY_API_KEY+'&image_type=photo&safesearch=true&per_page=8&lang='+(lang=='SPANISH'?'es':'en')+'&q='+encodeURIComponent(q));
   if(r.status==429)throw new Error('RATE');if(!r.ok)throw new Error('Pixabay '+r.status);
-  return((await r.json()).hits||[]).map(p=>({thumb:p.previewURL,medium:p.webformatURL,by:p.user,url:p.pageURL}))}const r=await fetch('https://api.pexels.com/v1/search?per_page=8&orientation=square&query='+encodeURIComponent(q),{headers:{Authorization:process.env.PEXELS_API_KEY||''}});
+  return((await r.json()).hits||[]).map(p=>({thumb:p.previewURL,medium:String(p.webformatURL).replace('_640','_340'),by:p.user,url:p.pageURL}))}const r=await fetch('https://api.pexels.com/v1/search?per_page=8&orientation=square&query='+encodeURIComponent(q),{headers:{Authorization:process.env.PEXELS_API_KEY||''}});
  if(r.status==429)throw new Error('RATE');if(!r.ok)throw new Error('Pexels '+r.status);
  return((await r.json()).photos||[]).map(p=>({thumb:p.src.small,medium:p.src.medium,by:p.photographer,url:p.url}))};
 exports.download=async(url,k)=>{const f=crypto.createHash('md5').update(k).digest('hex').slice(0,12)+'.jpg';
