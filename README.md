@@ -2,7 +2,7 @@
 Spanish setup guide: see LEEME.md.
 
 ## What is inside
-- public/index.html: the student app. public/signup.html: parent sign-up page. public/admin.html: approve students, assign usernames, change expiry dates (asks for ADMIN_CODE). public/teacher.html: student progress table. public/review.html: photo review tool.
+- public/index.html: the student app. public/signup.html: parent sign-up page. public/admin.html: approve students, assign usernames, change expiry dates (asks for ADMIN_CODE). public/words.html: add, edit, import and export the words (stored in the Supabase `words` table; the student app reads them through /api/my-words). public/teacher.html: student progress table. public/review.html: photo review tool.
 - server.js + accounts.js + db.js: the server. Storage is Supabase when SUPABASE_URL and SUPABASE_SERVICE_KEY are set (see supabase/schema.sql), otherwise local files for testing.
 - enrich.js: photo tool. Reads PIXABAY_API_KEY (or PEXELS_API_KEY) from the environment or from a local .env file.
 

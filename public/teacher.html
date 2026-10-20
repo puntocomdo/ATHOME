@@ -1,6 +1,6 @@
-<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Student progress</title>
+<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Student progress</title><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="theme-color" content="#131838">
 <style>body{font-family:system-ui,sans-serif;max-width:1000px;margin:auto;padding:12px}table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid #ddd;padding:6px 8px;text-align:left}th{background:#f4f1fb}</style>
-<h2>Student progress</h2><button onclick=csv()>Download CSV</button> <button onclick=location.reload()>Refresh</button><table id=t></table>
+<p><a href="/admin">← Admin</a> · <a href="/words">Words</a></p><h2>Student progress</h2><button onclick=csv()>Download CSV</button> <button onclick=location.reload()>Refresh</button><table id=t></table>
 <script>
 const _f=window.fetch.bind(window);window.fetch=(u,o={})=>{o.headers=Object.assign({'x-admin-token':localStorage.getItem('adm_tk')||''},o.headers||{});return _f(u,o).then(r=>{if(r.status==401){location='/admin.html'}return r})};
 const H=['Student','Grade','School','Level','Words correct','Weeks done','Day streak','Gems','Rounds','Last active'];let rows=[];
