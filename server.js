@@ -10,7 +10,7 @@ http.createServer(async(q,s)=>{try{const u=new URL(q.url,'http://x'),p=u.searchP
  if(await R.handle(q,s,u))return;
  if(u.pathname=='/api/list')return send(s,Object.entries(db).filter(([k,v])=>v.lang==p.get('lang')&&v.grade==p.get('grade')&&(p.get('unapproved')!='1'||!v.approved)).map(([k,v])=>({key:k,...v})));
  if(u.pathname=='/api/save'){const b=await body(q);Object.assign(db[b.key],{def:b.def,sent:b.sent,sight:b.sight,approved:b.approved});L.save(db);return send(s,{ok:1})}
- if(u.pathname=='/api/photos')return send(s,await L.pexels(p.get('q'),p.get('lang')));
+ if(u.pathname=='/api/photos')return send(s,await L.pexels(p.get('q')));
  if(u.pathname=='/api/pick'){const b=await body(q),f=await L.download(b.medium,b.key);Object.assign(db[b.key],{photo:f,by:b.by,url:b.url,sight:false});L.save(db);return send(s,{file:f})}
  if(u.pathname=='/export.csv'){const rows=[['GRADE','SCHOOL (blank = every school)','UNIT # WEEK #','WORD','LANGUAGE','DEFINITION','SENTENCE','PHOTO FILE (example: cat.jpg)']];
   for(const w of L.words()){const v=db[L.key(w.lang,w.word)]||{};rows.push([w.grade,w.school,w.uw,w.word,w.lang,v.def||'',v.sent||'',v.photo||''])}

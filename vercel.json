@@ -3,5 +3,5 @@
   "outputDirectory": "public",
   "cleanUrls": true,
   "rewrites": [{ "source": "/api/:name", "destination": "/api/handler?name=:name" }],
-  "functions": { "api/handler.js": { "maxDuration": 15 } }
+  "functions": { "api/handler.js": { "maxDuration": 30 } }
 }

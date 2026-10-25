@@ -1,0 +1,7 @@
+// Loads the starter words that came with the app (seed/words.csv) into the words table. Safe to run again: it never erases what you already edited.
+const fs=require('fs'),DB=require('./db');
+function parse(t){const R=[];let r=[],c='',q=false;t=t.replace(/^\uFEFF/,'');for(let i=0;i<t.length;i++){const ch=t[i];if(q){if(ch=='"'&&t[i+1]=='"'){c+='"';i++}else if(ch=='"')q=false;else c+=ch}else if(ch=='"')q=true;else if(ch==','){r.push(c);c=''}else if(ch=='\n'||ch=='\r'){if(ch=='\r'&&t[i+1]=='\n')i++;r.push(c);c='';if(r.some(x=>x))R.push(r);r=[]}else c+=ch}if(c||r.length){r.push(c);R.push(r)}return R}
+exports.run=async()=>{const R=parse(fs.readFileSync(__dirname+'/seed/words.csv','utf8')),h=R[0].map(x=>x.toLowerCase()),ix=f=>h.findIndex(f);
+ const c={grade:ix(x=>x=='grade'),school:ix(x=>x.startsWith('school')),uw:ix(x=>x.includes('unit')),word:ix(x=>x=='word'),lang:ix(x=>x=='language'),def:ix(x=>x.startsWith('definition')),sent:ix(x=>x.startsWith('sentence')),photo:ix(x=>x.startsWith('photo'))},g=(r,k)=>c[k]<0?'':(r[c[k]]||'').trim(),rows=[];
+ for(const r of R.slice(1)){const m=g(r,'uw').match(/(\d+)\D+(\d+)/);if(!g(r,'word'))continue;rows.push({grade:g(r,'grade'),school:g(r,'school'),unit:m?m[1]:1,week:m?m[2]:1,word:g(r,'word'),lang:/^(es|span)/i.test(g(r,'lang'))?'es':'en',definition:g(r,'def'),sentence:g(r,'sent'),photo:g(r,'photo').replace(/^photos\//,'')})}
+ let n=0;for(let i=0;i<rows.length;i+=300)n+=await DB.importWords(rows.slice(i,i+300));return n};

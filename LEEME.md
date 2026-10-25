@@ -31,6 +31,14 @@ Con Node.js instalado: copia `.env.example` a `.env`, pon tu `PIXABAY_API_KEY`, 
 5. Una semana aparece en la app cuando **todas** sus palabras tienen definición y oración. Los cambios se ven en la app la próxima vez que el estudiante entre.
 6. **Exportar CSV** baja todas tus palabras (se pueden volver a importar).
 
+### Fotos automáticas (con tu llave de Pixabay)
+- En la página **Palabras** toca **Buscar fotos automáticamente**. La app usa la llave `PIXABAY_API_KEY` que pusiste en Vercel: busca una foto para cada palabra que no tenga, la guarda en tu Supabase (carpeta de fotos `word-photos`, se crea sola) y la pone en la palabra. Tarda unos segundos por grupo de 12; deja la página abierta (puedes tocar **Detener**).
+- Para cambiar una foto: en la fila de la palabra toca **Buscar foto**, elige otra y listo.
+- Las palabras sin resultado se marcan como "Sin foto" y muestran la oración con un espacio en blanco.
+- Pixabay deja unas 100 búsquedas por minuto, por eso la página espera unos segundos entre grupos.
+- Si la tabla está vacía, la página te muestra un botón **Cargar las palabras que vienen con la app** (un solo clic). Si importas el CSV otra vez, nunca borra las definiciones ni las fotos que ya tengas.
+- Arriba ves cuántas palabras hay, cuántas no tienen definición u oración y cuántas no tienen foto. Puedes mostrar 100, 250, 500 o 1000 por página y filtrar por "Sin foto" o "Sin definición".
+
 ## 6. Primera prueba
 1. Abre `tu-dominio/admin` → escribe el código de administrador.
 2. En la app toca **Regístrate** y llena un niño de prueba.
