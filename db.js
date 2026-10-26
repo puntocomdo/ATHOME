@@ -21,17 +21,19 @@ const KEY=w=>[w.lang,w.grade,w.unit,w.week,w.word,w.school].join('|');
 const ORDER='order=lang.asc,grade.asc,unit.asc,week.asc,word.asc';
 const cnt=async f=>{const k=process.env.SUPABASE_SERVICE_KEY,r=await fetch(`${base}/rest/v1/words?select=id&limit=1${f}`,{headers:{apikey:k,Authorization:'Bearer '+k,Prefer:'count=exact'}});if(!r.ok)throw new Error('Supabase '+r.status);return +((r.headers.get('content-range')||'').split('/')[1])||0};
 const INC='&or='+enc('(definition.eq.,sentence.eq.)'),NOP='&photo=eq.&sight=eq.false&active=eq.true';
-exports.words=async({lang,grade,q,limit=100,offset=0,incomplete,nophoto})=>{limit=Math.min(1000,Math.max(1,+limit||100));offset=Math.max(0,+offset||0);
- if(SB){let f='';if(lang)f+=`&lang=eq.${enc(lang)}`;if(grade)f+=`&grade=eq.${+grade}`;if(nophoto)f+=NOP;
+exports.words=async({lang,grade,school,q,limit=100,offset=0,incomplete,nophoto})=>{limit=Math.min(1000,Math.max(1,+limit||100));offset=Math.max(0,+offset||0);
+ if(SB){let f='';if(lang)f+=`&lang=eq.${enc(lang)}`;if(grade)f+=`&grade=eq.${+grade}`;if(school!=null)f+=`&school=eq.${enc(school)}`;if(nophoto)f+=NOP;
   const t=q?String(q).replace(/[(),*%]/g,' ').trim():'';
   if(t&&incomplete)f+='&and='+enc(`(or(definition.eq.,sentence.eq.),or(word.ilike.*${t}*,definition.ilike.*${t}*,sentence.ilike.*${t}*))`);
   else if(incomplete)f+=INC;else if(t)f+=`&or=${enc(`(word.ilike.*${t}*,definition.ilike.*${t}*,sentence.ilike.*${t}*)`)}`;
   const k=process.env.SUPABASE_SERVICE_KEY,r=await fetch(`${base}/rest/v1/words?select=*&${ORDER}&limit=${limit}&offset=${offset}${f}`,{headers:{apikey:k,Authorization:'Bearer '+k,Prefer:'count=exact'}});
   if(!r.ok)throw new Error('Supabase '+r.status+': '+(await r.text()).slice(0,200));const cr=r.headers.get('content-range')||'';return{rows:await r.json(),total:+(cr.split('/')[1])||0}}
- let a=rf('words.json',[]);if(lang)a=a.filter(w=>w.lang==lang);if(grade)a=a.filter(w=>w.grade==+grade);
+ let a=rf('words.json',[]);if(lang)a=a.filter(w=>w.lang==lang);if(school!=null)a=a.filter(w=>(w.school||'')==school);if(grade)a=a.filter(w=>w.grade==+grade);
  if(incomplete)a=a.filter(w=>!w.definition||!w.sentence);if(nophoto)a=a.filter(w=>!w.photo&&!w.sight&&w.active!==false);
  if(q){const t=String(q).toLowerCase();a=a.filter(w=>[w.word,w.definition,w.sentence].join(' ').toLowerCase().includes(t))}
  a.sort((x,y)=>(x.lang+x.grade*100+x.unit*10+x.week).toString().localeCompare((y.lang+y.grade*100+y.unit*10+y.week).toString())||x.word.localeCompare(y.word));return{rows:a.slice(offset,offset+limit),total:a.length}};
+// Schools that have words (view word_schools), for the school filter on the Words page.
+exports.schools=async()=>SB?(await sb('GET','word_schools?select=school,n&order=school.asc')):Object.entries(rf('words.json',[]).reduce((o,w)=>(o[w.school||'']=(o[w.school||'']||0)+1,o),{})).map(([school,n])=>({school,n})).sort((a,b)=>a.school.localeCompare(b.school));
 exports.stats=async()=>{if(SB)return{total:await cnt(''),incomplete:await cnt(INC),nophoto:await cnt(NOP)};const a=rf('words.json',[]);return{total:a.length,incomplete:a.filter(w=>!w.definition||!w.sentence).length,nophoto:a.filter(w=>!w.photo&&!w.sight&&w.active!==false).length}};
 exports.countNoPhoto=async()=>SB?cnt(NOP):rf('words.json',[]).filter(w=>!w.photo&&!w.sight&&w.active!==false).length;
 exports.noPhotoWords=async(n,after=0)=>SB?sb("GET",`words?select=id,lang,word&order=id.asc&limit=${+n}&id=gt.${+after||0}${NOP}`):rf("words.json",[]).filter(w=>!w.photo&&!w.sight&&w.active!==false&&w.id>(+after||0)).slice(0,n);

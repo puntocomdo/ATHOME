@@ -40,3 +40,7 @@ create table if not exists words (
 create unique index if not exists words_unique on words (lang, grade, unit, week, word, school);
 create index if not exists words_lookup on words (grade, lang);
 alter table words enable row level security;
+
+-- Schools that have words (for the school filter on the Words page). Already created in your project.
+create or replace view word_schools with (security_invoker = true) as select school, count(*)::int as n from words group by school;
+revoke all on word_schools from anon, authenticated;
