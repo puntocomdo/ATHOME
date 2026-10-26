@@ -17,7 +17,7 @@ tr.new td{background:#f2fbf5}tr.dirty td{background:#fff8e6}.th{width:44px;heigh
 <header><img src="/logo.webp" alt="At Home"><nav><a class=nv href="/admin" data-k=nav1></a><a class="nv on" href="/words" data-k=nav4></a><a class=nv href="/teacher" data-k=nav2></a></nav><div class=lang><button id=l-es onclick="L('es')">ES</button><button id=l-en onclick="L('en')">EN</button></div></header>
 <main><h1 data-k=h></h1><p class=sub id=sum></p>
 <div class=bar><select id=fl onchange="off=0;load()"><option value="" data-k=allL></option><option value=en>English</option><option value=es>Español</option></select>
-<select id=fg onchange="off=0;load()"><option value="" data-k=allG></option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+<select id=fg onchange="off=0;load()"><option value="" data-k=allG></option><option value=0>PF</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
 <select id=ff onchange="off=0;load()"><option value="" data-k=fAll></option><option value=incomplete data-k=fInc></option><option value=nophoto data-k=fNo></option></select><select id=ps onchange="PAGE=+this.value;off=0;load()"><option>100</option><option>250</option><option>500</option><option>1000</option></select>
 <input type=search id=q data-k=ph oninput="clearTimeout(tm);tm=setTimeout(()=>{off=0;load()},350)">
 <button class="bt ok" id=ap onclick="autoPhotos()" data-k=auto></button><button class="bt ghost" onclick="document.getElementById('file').click()" data-k=imp></button><button class="bt ghost" onclick="exportCsv()" data-k=exp></button><input type=file id=file accept=".csv,text/csv" hidden onchange="importCsv(this.files[0])"></div>
@@ -42,14 +42,17 @@ let ST=null;
 async function seed(){$('seed').innerHTML=`<p class=sub>${T('seeding')}</p>`;try{const j=await post('/api/words-seed',{});toast(`${T('seedDone')}: ${j.imported}`)}catch(e){}load()}
 let apRun=false;
 async function autoPhotos(){if(apRun){apRun=false;return}apRun=true;$('ap').textContent=T('stop');let done=0,idle=0;
- try{while(apRun){const r=await fetch('/api/words-photos',{method:'POST',body:'{}'}),j=await r.json();if(!r.ok){toast(j.error||T('err'));break}done+=j.done;toast(`${T('photosAdded')}: ${done} · ${T('left')}: ${j.remaining}`);if(j.error){toast(j.error);break}if(!j.remaining)break;idle=j.done?0:idle+1;if(idle>=2)break;await new Promise(x=>setTimeout(x,9000))}}catch(e){}
+ let after=0,lastErr='';
+ try{while(apRun){const r=await fetch('/api/words-photos?after='+after,{method:'POST',body:'{}'});let j;try{j=await r.json()}catch(e){j={error:T('err')+' ('+r.status+')'}}if(!r.ok){toast(j.error||T('err'));lastErr=j.error;break}
+  done+=j.done;after=j.last||after;if(j.error)lastErr=j.error;toast(`${T('photosAdded')}: ${done} · ${T('left')}: ${j.remaining}`);if(j.stop||!j.more||!j.remaining)break;await new Promise(x=>setTimeout(x,4000))}}catch(e){lastErr=String(e)}
+ if(lastErr)open_(`<h2>${T('photosAdded')}: ${done}</h2><p style="color:#d64545">${H(lastErr)}</p><button class="bt" onclick="close_()">OK</button>`)
  apRun=false;$('ap').textContent=T('auto');load()}
 async function pf(i){const w=rows[i];open_(`<h2>${T('pickT')}</h2><div style="display:flex;gap:6px;margin:8px 0"><input id=pq value="${H(w.word)}" style="flex:1;padding:9px;border:2px solid #ddd6f5;border-radius:10px" onkeydown="if(event.key=='Enter')pgo(${i})"><button class=bt onclick="pgo(${i})">${T('pickQ')}</button></div><div id=pr style="display:flex;flex-wrap:wrap;gap:6px;min-height:60px"></div><button class="bt ghost" style="margin-top:10px" onclick="close_()">×</button>`);pgo(i)}
 async function pgo(i){const w=rows[i];$('pr').innerHTML='…';try{const r=await fetch('/api/photo-search?q='+encodeURIComponent($('pq').value)+'&lang='+w.lang),j=await r.json();if(!r.ok){$('pr').textContent=j.error||T('err');return}
  window.__hits=j;$('pr').innerHTML=j.map((h,n)=>`<img src="${h.thumb}" style="width:88px;height:88px;object-fit:cover;border-radius:10px;cursor:pointer" onclick="pset(${i},${n})">`).join('')||T('pickNone')}catch(e){$('pr').textContent=T('err')}}
 async function pset(i,n){$('pr').innerHTML='…';try{await post('/api/photo-set',{id:rows[i].id,url:window.__hits[n].full});close_();toast(T('saved'));load()}catch(e){$('pr').textContent=T('err')}}
 const sel=(id,opts,v)=>`<select id="${id}" onchange="dirty(this)">${opts.map(o=>`<option value="${o[0]}" ${String(o[0])==String(v)?'selected':''}>${o[1]}</option>`).join('')}</select>`;
-const LANGS=[['en','English'],['es','Español']],GR=[1,2,3,4,5].map(n=>[n,n]);
+const LANGS=[['en','English'],['es','Español']],GR=[[0,'PF']].concat([1,2,3,4,5].map(n=>[n,n]));
 function rowHtml(w,i){const f=n=>`f_${i}_${n}`,cl=i=='n'?'new':'';
  return `<tr class="${cl}" id="r_${i}"><td class=w2>${sel(f('lang'),LANGS,w.lang)}</td><td class=w1>${sel(f('grade'),GR,w.grade)}</td><td class=w1><input id="${f('unit')}" type=number min=1 value="${w.unit}" oninput="dirty(this)"></td><td class=w1><input id="${f('week')}" type=number min=1 value="${w.week}" oninput="dirty(this)"></td>
  <td style="min-width:120px"><input id="${f('word')}" value="${H(w.word)}" oninput="dirty(this)"></td><td style="min-width:220px"><textarea id="${f('definition')}" oninput="dirty(this)">${H(w.definition)}</textarea></td><td style="min-width:220px"><textarea id="${f('sentence')}" oninput="dirty(this)">${H(w.sentence)}</textarea></td>
@@ -57,7 +60,7 @@ function rowHtml(w,i){const f=n=>`f_${i}_${n}`,cl=i=='n'?'new':'';
  <td style="min-width:120px"><input id="${f('school')}" value="${H(w.school)}" placeholder="${T('hint')}" oninput="dirty(this)"></td><td><input type=checkbox id="${f('sight')}" ${w.sight?'checked':''} onchange="dirty(this)"></td><td><input type=checkbox id="${f('active')}" ${w.active!==false?'checked':''} onchange="dirty(this)"></td>
  <td class=act>${i=='n'?`<button class="bt ok" onclick="add()">${T('add')}</button>`:`<button class="bt" onclick="sv(${i})">${T('save')}</button> <button class="bt no" onclick="dl(${i})">${T('del')}</button>`}</td></tr>`}
 function draw(){
- $('tb').innerHTML='<tr>'+T('cols').map(c=>`<th>${c}</th>`).join('')+'</tr>'+rowHtml({lang:$('fl').value||'en',grade:$('fg').value||1,unit:1,week:1,word:'',definition:'',sentence:'',photo:'',school:'',sight:false,active:true},'n')+(rows.map(rowHtml).join('')||`<tr><td colspan=12 style="text-align:center;padding:30px;color:#6f6a93">${T('none')}</td></tr>`);
+ $('tb').innerHTML='<tr>'+T('cols').map(c=>`<th>${c}</th>`).join('')+'</tr>'+rowHtml({lang:$('fl').value||'en',grade:$('fg').value===''?1:$('fg').value,unit:1,week:1,word:'',definition:'',sentence:'',photo:'',school:'',sight:false,active:true},'n')+(rows.map(rowHtml).join('')||`<tr><td colspan=12 style="text-align:center;padding:30px;color:#6f6a93">${T('none')}</td></tr>`);
  $('pn').textContent=total?T('showing')(off+1,Math.min(off+PAGE,total),total):'';
  const empty=!total&&!$('q').value&&!$('ff').value&&!$('fl').value&&!$('fg').value&&ST&&ST.total===0;$('seed').innerHTML=empty?`<div style="background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;text-align:center"><p style="margin:0 0 10px"><b>${T('seedT')}</b></p><button class="bt ok" onclick="seed()">${T('seedB')}</button></div>`:''}
 function dirty(el){const tr=el.closest('tr');if(tr&&tr.id!='r_n')tr.className='dirty'}

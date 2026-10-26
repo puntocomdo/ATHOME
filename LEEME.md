@@ -47,3 +47,12 @@ Con Node.js instalado: copia `.env.example` a `.env`, pon tu `PIXABAY_API_KEY`, 
 
 ## En el admin puedes
 Agregar y editar palabras, aprobar o rechazar, **asignar o cambiar usernames**, **cambiar la fecha de vencimiento**, cambiar grado y colegio, renovar y copiar el mensaje para el padre. Si cambias un username, el progreso del niño se mueve con él.
+
+## 7. Novedades (octubre 2026)
+- **Grado PF**: en el admin, en la página Palabras y en el registro ya aparece **PF** (se guarda como grado 0).
+- **Empieza en (Unidad · Semana)**: al aprobar, elige en qué semana empieza el niño. Las semanas anteriores salen como **ya hechas** (las vieron en clase desde septiembre). El admin sugiere la semana actual del año escolar. Se puede cambiar después con **Editar**.
+- **WhatsApp**: los números de 10 dígitos (809, 829, 849) ahora llevan el **1** delante, que es lo que WhatsApp necesita. Si el número está mal, el admin lo avisa.
+- **WhatsApp con foto**: el botón verde oscuro envía el mensaje **con la foto** `public/flyer.jpg` (los pasos para agregar la app). En el celular o iPad abre el menú de compartir: elige WhatsApp. En una computadora sin esa opción, copia el mensaje y abre la foto para enviarla a mano. Para cambiar la foto, reemplaza `public/flyer.jpg`.
+- **Fotos automáticas**: ahora busca una palabra a la vez (antes buscaba 12 al mismo tiempo y Pixabay las rechazaba). Si hay un problema con la llave, la página te dice exactamente cuál.
+- **Lista "General"**: palabras normales de PF a 5to (inglés y español) para los colegios que no tienen lista propia. Tienen el colegio **General**. Un niño de otro colegio ve automáticamente la lista General; Colegio Continental sigue viendo la suya.
+- **Practicar** (botón en el mapa y pestaña abajo): el niño ve una foto (o escucha el significado) y toca la palabra correcta entre 4. Gana gemas igual que en las semanas.

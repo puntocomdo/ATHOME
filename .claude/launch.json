@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "start",
+      "runtimeExecutable": "/usr/bin/ruby",
+      "runtimeArgs": ["/Users/puntocom.do/Documents/ATHOME/.claude/static-server.rb"],
+      "port": 3000
+    },
+    {
+      "name": "node",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start"],
+      "port": 3000
+    }
+  ]
+}

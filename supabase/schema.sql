@@ -2,13 +2,15 @@
 create table if not exists accounts (
   id text primary key,          -- request code, like AB12-CD34
   parent text, contact text, child text,
-  grade int, school text,
+  grade int, school text,      -- grade 0 = PF
   status text default 'pending', -- pending | approved | rejected
   created bigint, approved bigint, exp bigint,
   reason text,
   username text unique,
-  token text
+  token text,
+  start text not null default ''  -- first week the child still has to do, like 2-3 (earlier weeks were covered in class)
 );
+alter table accounts add column if not exists start text not null default '';
 create table if not exists progress (
   username text primary key,
   grade int, school text,

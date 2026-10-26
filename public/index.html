@@ -98,6 +98,9 @@ input.t{background:#1b2150;color:#fff;border-color:#8aeefa}.pill{background:#2fb
 .map{height:auto!important;aspect-ratio:1/1;max-width:560px;margin-left:auto;margin-right:auto}
 body.dev-tablet{zoom:1.3}body.dev-tablet .wrap{max-width:780px}body.dev-tablet .tabs{width:min(780px,100%)}body.dev-tablet .bud{grid-template-columns:repeat(4,1fr)}
 body.dev-desk{zoom:1.45}body.dev-desk .wrap{max-width:900px}body.dev-desk .tabs{width:min(900px,100%)}body.dev-desk .bud{grid-template-columns:repeat(5,1fr)}
+/* practice game */
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.opts button{margin:0;padding:14px 8px;font-size:26px;background:#6b57c7;color:#fff;border-radius:22px;word-break:break-word}.opts button.ok{background:var(--ok);animation:pop .4s}.opts button.no{background:var(--rd)}
+.w.p2{background:#2fb7c9;color:#10204a;margin:0 0 14px}.w.p2 svg{width:24px;height:24px;vertical-align:-5px}
 </style></head><body><div class="wrap">
 <div class="sky"><svg class="cl" viewBox="0 0 880 100" width="880" height="100"><defs><g id="c" fill="#d6edfb"><circle cx="40" cy="48" r="20"/><circle cx="68" cy="36" r="26"/><circle cx="100" cy="48" r="20"/><rect x="22" y="48" width="96" height="20" rx="10"/></g></defs><use href="#c" x="20" y="8"/><use href="#c" x="260" y="30"/><use href="#c" x="520" y="0"/><use href="#c" x="760" y="28"/></svg><svg class="sun" viewBox="0 0 64 64"><path d="M44 6a27 27 0 1 0 14 42A23 23 0 0 1 44 6z" fill="#f3e9b8"/></svg><b style="left:90px;top:44px;animation-delay:.4s">★</b><b style="left:58%;top:30px;animation-delay:1.1s">✦</b><b style="left:80%;top:62px;animation-delay:.7s">★</b><b style="left:22%;top:66px;animation-delay:1.9s">✦</b><b style="left:30px;top:20px">★</b><b style="left:46%;top:60px;animation-delay:.8s">★</b><b style="left:68%;top:18px;animation-delay:1.5s">★</b></div>
 <main id="app"></main></div>
@@ -170,7 +173,7 @@ const lvlBar=()=>`<div class="lvl"><div style="display:flex;justify-content:spac
 const push=()=>{try{if(!S.user.token)return;fetch("/api/progress",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({user:S.user.code,token:S.user.token,grade:S.user.grade,school:S.user.school,data:P})}).catch(()=>{})}catch(e){}};
 const D0=()=>({total:0,rounds:0,streak:0,last:"",badges:[],log:[],done:[],updated:0});
 const syncDown=()=>{try{if(!S.user.token)return Promise.resolve();return Promise.race([fetch("/api/progress?user="+S.user.code+"&token="+S.user.token).then(r=>r.ok?r.json():{}).then(j=>{if(j&&j.data&&(j.data.updated||0)>(P.updated||0)){P=Object.assign(D0(),j.data);store.set("p_"+S.user.code,P)}}),new Promise(r=>setTimeout(r,1500))]).catch(()=>{})}catch(e){return Promise.resolve()}};
-const loadWords=()=>{try{if(!S.user.token)return Promise.resolve();return Promise.race([fetch("/api/my-words?user="+S.user.code+"&token="+S.user.token).then(r=>r.ok?r.json():null).then(j=>{if(j&&((j.en&&Object.keys(j.en).length)||(j.es&&Object.keys(j.es).length))){const g=S.user.grade;for(const k in WORDS)delete WORDS[k];Object.assign(WORDS,{en:{[g]:j.en||{}},es:{[g]:j.es||{}}});applyPhotos()}}),new Promise(r=>setTimeout(r,3000))]).catch(()=>{})}catch(e){return Promise.resolve()}};
+const loadWords=()=>{try{if(!S.user.token)return Promise.resolve();return Promise.race([fetch("/api/my-words?user="+S.user.code+"&token="+S.user.token).then(r=>r.ok?r.json():null).then(j=>{if(j&&typeof j.start=="string"&&S.user.start!==j.start){S.user.start=j.start;store.set("vp_user",S.user)}if(j&&((j.en&&Object.keys(j.en).length)||(j.es&&Object.keys(j.es).length))){const g=S.user.grade;for(const k in WORDS)delete WORDS[k];Object.assign(WORDS,{en:{[g]:j.en||{}},es:{[g]:j.es||{}}});applyPhotos()}}),new Promise(r=>setTimeout(r,3000))]).catch(()=>{})}catch(e){return Promise.resolve()}};
 const boot=()=>{loadP();Promise.all([syncDown(),loadWords()]).then(home)};
 function prog(){const ws=Object.keys(weeksOf()),un={};ws.forEach(w=>{const u=w.split("-")[0];(un[u]=un[u]||[0,0])[1]++;if(st(w)=="g")un[u][0]++});const H=x=>`<div class="ch" style="color:var(--pu);font-size:26px;margin-bottom:6px">${t(x)}</div>`;
  $.innerHTML=`<h1>${t("Rewards")}</h1><div class="top"><img class="av" style="width:78px;height:78px;border-color:${auc()}" src="${IMG["a_"+P.av]}" alt=""><div class="hello">${esc(name())}<small style="display:block;font-size:19px;color:var(--pu)">${t("Level")} ${lvl()} · ${ttl()}</small></div></div>${lvlBar()}
@@ -194,14 +197,16 @@ async function enter(){
  const c=document.getElementById("code").value.trim().toLowerCase();let u=null;
  try{const r=await fetch("/api/login",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({user:c})}),j=await r.json();
   if(!r.ok)return login(t(j.error||"We couldn't find that username."));
-  u={code:c,grade:j.grade,school:j.school,name:j.name,exp:j.exp,token:j.token}}
+  u={code:c,grade:j.grade,school:j.school,name:j.name,exp:j.exp,token:j.token,start:j.start||""}}
  catch(e){if(!DEMO||!STUDENTS[c])return login(t("We couldn't connect. Please try again."));
   u=store.get("act_"+c);if(!u){u={code:c,grade:CODES[c],exp:Date.now()+DAYS_VALID*864e5};store.set("act_"+c,u)}u.grade=CODES[c];u.school=STUDENTS[c].school}
  if(Date.now()>u.exp)return login(t("This username has expired. Please renew."));
  S.user=u;store.set("vp_user",u);boot()}
 function logout(){S.user=null;store.set("vp_user",null);login()}
 const weeksOf=()=>{const g=((WORDS[S.lang]||{})[S.user.grade])||{},o={};for(const k in g){const l=g[k].filter(x=>!x.sc||x.sc==S.user.school);if(l.length)o[k]=l}return o};
-function st(w){const b=P.best[S.lang+"_"+w];if(b==null)return"y";return b/weeksOf()[w].length>=PASS?"g":"o"}
+// Weeks before the start week the admin chose were already covered in class, so they count as done.
+const covered=w=>{const s=S.user&&S.user.start;if(!s)return false;const[a,b]=w.split("-").map(Number),[c,d]=s.split("-").map(Number);return a<c||(a==c&&b<d)};
+function st(w){const b=P.best[S.lang+"_"+w];if(covered(w)&&(b==null||b/weeksOf()[w].length<PASS))return"g";if(b==null)return"y";return b/weeksOf()[w].length>=PASS?"g":"o"}
 
 Object.assign(ES,{"Your adventure awaits,": "¡Tu aventura te espera,", "Map": "Mapa", "Rewards": "Premios", "Buddy": "Amigo", "PLAY NEXT": "SIGUIENTE", "Let's play!": "¡A jugar!", "My buddy": "Mi amigo", "Choose your buddy": "Elige a tu amigo", "Everyone": "Todos", "Kids": "Niños", "Animals": "Animales", "Magic aura": "Aura mágica", "Save my buddy": "Guardar a mi amigo", "unlocked": "desbloqueados", "A little you. A little magic.": "Un poco tú. Un poco de magia.", "Not enough gems yet!": "¡Aún no tienes gemas suficientes!", "Saved!": "¡Guardado!", "words": "palabras", "All weeks": "Todas las semanas", "Cyan": "Cian", "Purple": "Morado", "Pink": "Rosa", "Gold": "Dorado", "Moonlight Isles": "Islas Lunares", "Star Harbor": "Puerto Estelar", "Crystal Falls": "Cascadas de Cristal", "Dream Meadow": "Prado de Sueños", "Cloud Kingdom": "Reino de las Nubes", "Rainbow Peak": "Pico Arcoíris", "Unit": "Unidad"});
 Object.assign(ICO,{map:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2zM9 4v14M15 6v14"/></svg>',
@@ -214,7 +219,8 @@ const POS=[[22,84],[70,68],[28,50],[70,32],[38,12]];
 const AURA=[["#8aeefa","Cyan"],["#b39bff","Purple"],["#ff9fcf","Pink"],["#ffd76a","Gold"]];
 const ANIM=new Set(["kitty","puppy","bunny","penguin","froggy","panda","foxy","lion"]);
 const auc=()=>AURA[P.aura||0][0];
-const navHtml=a=>`<nav class="tabs">${[["map","Map","home()",ICO.map],["rew","Rewards","prog()",ICO.gift],["bud","Buddy","shop()",ICO.smile]].map(x=>`<button class="${a==x[0]?"on":""}" onclick="${x[2]}">${x[3]}<span>${t(x[1])}</span></button>`).join("")}</nav>`;
+ICO.tgt='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>';
+const navHtml=a=>`<nav class="tabs">${[["map","Map","home()",ICO.map],["rew","Rewards","prog()",ICO.gift],["pra","Practice","practice()",ICO.tgt],["bud","Buddy","shop()",ICO.smile]].map(x=>`<button class="${a==x[0]?"on":""}" onclick="${x[2]}">${x[3]}<span>${t(x[1])}</span></button>`).join("")}</nav>`;
 const TREES=[[60,120,1,"#6b57c7"],[300,90,1.1,"#2fa7a5"],[110,200,1.2,"#7b68d8"],[250,200,1,"#2fa7a5"],[80,285,1,"#6b57c7"],[290,270,1.1,"#7b68d8"],[200,322,.9,"#2fa7a5"],[160,60,.9,"#6b57c7"],[320,180,.8,"#6b57c7"],[40,200,.8,"#2fa7a5"]];
 const ISL='<svg class="isl" viewBox="0 0 360 360"><defs><radialGradient id="ig" cx="50%" cy="40%"><stop offset="0" stop-color="#4b4fa8"/><stop offset="1" stop-color="#1f2760"/></radialGradient></defs><path d="M40 90C20 40 120 20 180 30S340 40 330 120 350 250 300 310 140 350 80 320 20 240 40 170z" fill="url(#ig)"/><path d="M60 305C100 335 200 348 270 322" stroke="#2fb7c9" stroke-opacity=".35" stroke-width="10" fill="none" stroke-linecap="round"/>'+TREES.map(a=>`<g transform="translate(${a[0]} ${a[1]}) scale(${a[2]})"><path d="M0 -24L13 0H-13z" fill="${a[3]}"/><path d="M0 -12L17 13H-17z" fill="${a[3]}" opacity=".85"/><rect x="-2.5" y="13" width="5" height="8" fill="#3a2a6a"/></g>`).join("")+'<g fill="#fff" opacity=".7"><circle cx="30" cy="40" r="2"/><circle cx="330" cy="30" r="2"/><circle cx="200" cy="12" r="1.6"/><circle cx="340" cy="330" r="2"/></g></svg>';
 function unit(d){S.unit=S.units[S.units.indexOf(S.unit)+d]||S.unit;home()}
@@ -238,6 +244,7 @@ function home(){
  <div class="bar"><i style="width:${uw.length?dn/uw.length*100:0}%"></i></div>
  <div class="map">${ISL}<svg class="isl" viewBox="0 0 360 360"><path d="${path}" fill="none" stroke="#8aeefa" stroke-opacity=".75" stroke-width="5" stroke-linecap="round" stroke-dasharray="1 13"/></svg>${nodes||`<p class="tag" style="padding-top:150px">${t("No words yet")}</p>`}</div>
  ${nxt?`<div class="play"><div class="pt"><div class="pi">${ICO.play}</div><div><b>${lab(nxt).toUpperCase()}</b><small>${cnt} ${t("words")} · +${Math.max(1,Math.floor(cnt/5))} ${t(cnt<10?"gem":"gems")}</small></div></div><button class="w" onclick="study('${nxt}')">${t("Let's play!")} ${ICO.play}</button></div>`:""}
+ ${ws.length?`<button class="w p2" onclick="practice()">${ICO.tgt} ${t("Practice words")}</button>`:""}
  <div class="card"><div class="ch" style="color:#fff;font-size:24px;text-align:center;margin-bottom:8px">${t("All weeks")}</div><div class="cols">
  <div><h2>${t("Done weeks")}</h2><div class="c">${done.map(w=>pill(w,"g")).join("")||`<div class="none">${t("None yet")}</div>`}</div></div>
  <div><h2>${t("Pending weeks")}</h2><div class="c">${pend.map(w=>pill(w,st(w))).join("")||`<div class="none">${t(ws.length?"All done!":"No words yet")}</div>`}</div></div></div>
@@ -246,6 +253,37 @@ function home(){
 Object.assign(ES,{"This username is not active yet.": "Este usuario todavía no está activo. Si ya te registraste, toca Revisar mi solicitud o escríbenos por WhatsApp.", "This account was not approved.": "Esta cuenta no fue aprobada. Escríbenos por WhatsApp si necesitas ayuda.", "Your account is waiting for approval.": "Tu cuenta está esperando aprobación. Vuelve más tarde o escríbenos por WhatsApp.", "Need help? Write to us on WhatsApp": "¿Necesitas ayuda? Escríbenos por WhatsApp", "Join At Home!": "¡Únete a At Home!", "Fill in the form. We will review it and approve it within 24 hours.": "Llena el formulario. Lo revisaremos y lo aprobaremos en un máximo de 24 horas.", "Parent or guardian name": "Nombre del padre, madre o tutor", "Email or WhatsApp number": "Correo o número de WhatsApp", "Child's first name": "Nombre del niño o la niña", "Grade": "Grado", "School": "Colegio", "Other school": "Otro colegio", "School name": "Nombre del colegio", "Send request": "Enviar solicitud", "Please fill in every box.": "Por favor llena todas las casillas.", "Something went wrong. Please try again.": "Algo salió mal. Inténtalo de nuevo.", "Request received!": "¡Solicitud recibida!", "Your request code:": "Tu código de solicitud:", "Save this code. We usually approve within 24 hours. Come back and use Check my request to see when it is ready.": "Guarda este código. Normalmente aprobamos en 24 horas. Vuelve y usa Revisar mi solicitud para ver cuándo está lista.", "Check my request": "Revisar mi solicitud", "Enter your request code.": "Escribe tu código de solicitud.", "Check": "Revisar", "We could not find that code.": "No encontramos ese código.", "Still waiting for approval. This can take up to 24 hours. Please check again later.": "Todavía esperando aprobación. Puede tardar hasta 24 horas. Vuelve más tarde a revisar.", "Approved! Your username is": "¡Aprobado! Tu usuario es", "Sorry, this request was not approved.": "Lo sentimos, esta solicitud no fue aprobada.", "Sign-up works on the real website. For now, write to us on WhatsApp.": "El registro funciona en el sitio web real. Por ahora, escríbenos por WhatsApp."});
 Object.assign(ES,{"Wrong username or PIN.":"Usuario o PIN incorrecto.","Your account is waiting for approval.":"Tu cuenta está esperando aprobación.","Too many tries. Please wait a few minutes.":"Demasiados intentos. Espera unos minutos.","We couldn't connect. Please try again.":"No pudimos conectar. Inténtalo de nuevo.","New here? Sign up":"¿Nuevo? Regístrate","Change device":"Cambiar dispositivo","Free":"Gratis","Voice":"Voz","Pick the voice you like best":"Elige la voz que más te guste","Hello! Let's read together.":"¡Hola! Vamos a leer juntos."});
 Object.assign(ES,{"Create your buddy!": "¡Crea a tu amigo!", "Are you a girl or a boy?": "¿Eres chica o chico?", "Girl": "Chica", "Boy": "Chico", "Girls": "Chicas", "Boys": "Chicos", "Pick your starter buddy": "Elige a tu primer amigo"});
+// ---------- Practice: see a picture (or hear the meaning) and pick the right word out of 4 ----------
+Object.assign(ES,{"Practice":"Practicar","Practice words":"Practicar palabras","Which word is this?":"¿Qué palabra es esta?","Which word means this?":"¿Qué palabra significa esto?","Great job!":"¡Muy bien!","Oops! It was":"¡Uy! Era","Question":"Pregunta","words right":"palabras correctas","Play again":"Jugar otra vez","Look at the picture and tap the right word.":"Mira la foto y toca la palabra correcta.","Need more words to practice.":"Necesitas más palabras para practicar."});
+const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+function practice(){const W=weeksOf(),ws=Object.keys(W);if(!ws.length)return home();
+ // words from weeks already reached (done or covered) plus the next one; all weeks if that is too few
+ const nx=ws.findIndex(w=>st(w)!="g"),use=ws.slice(0,nx<0?ws.length:nx+1),seen={};let pool=[];
+ for(const w of (use.length?use:ws))for(const x of W[w])if(!seen[x.w]){seen[x.w]=1;pool.push(x)}
+ if(pool.length<4)for(const w of ws)for(const x of W[w])if(!seen[x.w]){seen[x.w]=1;pool.push(x)}
+ if(pool.length<4){$.innerHTML=`<h1 style="text-align:center">${t("Practice")}</h1><p class="tag">${t("Need more words to practice.")}</p><button class="w o" onclick="home()">${t("Back")}</button>${navHtml("pra")}`;return}
+ const pics=pool.filter(x=>x.img&&!x.sg&&!SIGHT.has(x.w));
+ // mostly picture questions; meaning questions fill in when there are few photos
+ S.pq=shuf(pics).slice(0,10);if(S.pq.length<10)S.pq=S.pq.concat(shuf(pool.filter(x=>!S.pq.includes(x))).slice(0,10-S.pq.length));S.pq=shuf(S.pq);
+ S.pool=pool;S.pi=0;S.pr=[];pq()}
+function pq(){const x=S.pq[S.pi],img=x.img&&!x.sg&&!SIGHT.has(x.w);
+ const near=shuf(S.pool.filter(o=>o.w!=x.w)).sort((a,b)=>Math.abs(a.w.length-x.w.length)-Math.abs(b.w.length-x.w.length)).slice(0,6);
+ S.po=shuf([x].concat(shuf(near).slice(0,3)));
+ $.innerHTML=`<div class="bar"><i style="width:${S.pi/S.pq.length*100}%"></i></div><div class="tag">${t("Question")} ${S.pi+1} ${t("of")} ${S.pq.length}</div>
+ <div class="card"><div class="ch" style="font-size:26px;margin-bottom:8px">${t(img?"Which word is this?":"Which word means this?")}</div>${img?`<div class="big">${ph(x)}</div>`:`<div class="clue" style="font-size:22px">${esc(x.d)}</div>`}
+ <button class="speak" onclick="say(S.pq[S.pi].d)" aria-label="Hear the meaning">${SPK}</button>
+ <div class="opts">${S.po.map((o,i)=>`<button id="po${i}" onclick="pa(${i})">${esc(o.w)}</button>`).join("")}</div><div class="fb" id="pf"></div></div>
+ <button class="w o" onclick="home()">${t("Back")}</button>`;if(!img)setTimeout(()=>say(x.d),300)}
+function pa(i){if(S.plock)return;S.plock=1;const x=S.pq[S.pi],ok=S.po[i].w==x.w,c=S.po.findIndex(o=>o.w==x.w);S.pr.push(ok);
+ document.getElementById("po"+c).className="ok";if(!ok)document.getElementById("po"+i).className="no";
+ document.getElementById("pf").textContent=ok?t("Great job!"):t("Oops! It was")+" "+x.w;sayQ(ok?t("Great job!"):t("Oops! It was"),x.w);
+ setTimeout(()=>{S.plock=0;S.pi++;S.pi<S.pq.length?pq():pdone()},ok?1100:2200)}
+function pdone(){const n=S.pr.filter(Boolean).length,tot=S.pq.length;P.pool+=n;const e=Math.floor(P.pool/5);P.gems+=e;P.pool%=5;P.prac=(P.prac||0)+1;save();
+ $.innerHTML=`<h1 style="text-align:center">${t(n/tot>=PASS?"Amazing!":"Good try!")}</h1><div class="card"><div class="score">${n}/${tot}</div><div class="tag">${t("words right")}</div>
+ <p class="tag" style="margin-top:10px"><b>${e?`${t("You earned")} ${e} ${t(e>1?"gems":"gem")}!`:t("No new gem yet")}</b><br>${P.pool}/5 ${t("words toward your next gem")}</p>`+
+ S.pq.map((x,i)=>`<div class="row"><span>${esc(x.w)}</span><span class="mini"><button onclick="say(S.pq[${i}].w)">${ICO.spk}</button><button onclick="say(S.pq[${i}].d)">${ICO.book}</button></span><span style="color:${S.pr[i]?"var(--ok)":"var(--rd)"}">${S.pr[i]?"✔":"✘"}</span></div>`).join("")+
+ `</div><button class="w g" onclick="practice()">${t("Play again")}</button><button class="w o" onclick="home()">${t("Back to weeks")}</button>${navHtml("pra")}`;
+ sayQ(t(n/tot>=PASS?"Amazing!":"Good try!"),t("Your score is")+" "+n+" "+t("of")+" "+tot);if(n/tot>=PASS)confetti()}
 const GSET=new Set(["mia","zoe","ana","lily","eva","nia","rosa","bella","kai","sofia","tara"]),BSET=new Set(["leo","sam","jay","max","cody","gus","theo","finn","omar","dan"]);
 function create(){
  if(!S.cg){$.innerHTML=`<h1 style="text-align:center">${t("Create your buddy!")}</h1><p class="tag">${t("Are you a girl or a boy?")}</p><div class="gb"><div onclick="S.cg='g';S.cp='mia';create()"><img src="${IMG.a_mia}" alt=""><b>${t("Girl")}</b></div><div onclick="S.cg='b';S.cp='leo';create()"><img src="${IMG.a_leo}" alt=""><b>${t("Boy")}</b></div></div>`;return sayQ(t("Are you a girl or a boy?"))}
@@ -261,7 +299,7 @@ function signupScreen(m,v){v=v||{};$.innerHTML=`<h1 style="text-align:center">${
  <label>${t("Parent or guardian name")}</label><input id="sp" value="${esc(v.p||"")}" autocomplete="name">
  <label>${t("Email or WhatsApp number")}</label><input id="sc" value="${esc(v.c||"")}">
  <label>${t("Child's first name")}</label><input id="sn" value="${esc(v.n||"")}">
- <label>${t("Grade")}</label><select id="sg">${[1,2,3,4,5].map(g=>`<option ${v.g==g?"selected":""}>${g}</option>`).join("")}</select>
+ <label>${t("Grade")}</label><select id="sg">${[0,1,2,3,4,5].map(g=>`<option value="${g}" ${(v.g==null||v.g===""?g===1:+v.g===g)?"selected":""}>${g?g:"PF"}</option>`).join("")}</select>
  <label>${t("School")}</label><select id="ss"><option>Colegio Continental</option><option value="other">${t("Other school")}</option></select><input id="so" placeholder="${t("School name")}" style="display:none;margin-top:8px">
  <div class="err">${m||""}</div><button class="sv" onclick="signupSend()">${t("Send request")}</button></div><button class="w o" onclick="login()">${t("Back")}</button>${waBtn()}`;
  const ss=document.getElementById("ss");ss.onchange=function(){document.getElementById("so").style.display=this.value=="other"?"block":"none"}}

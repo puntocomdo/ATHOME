@@ -14,6 +14,9 @@ exports.isAdmin=tok=>{if(!SECRET())return true;const[e,sg]=String(tok||'').split
 exports.okToken=async(user,token)=>{if(!token||!user)return false;const r=await DB.accountBy('username',String(user));return !!r&&same(r.token||'-',token)&&r.status=='approved'&&Date.now()<r.exp};
 const validU=u=>/^[a-z0-9]{3,30}$/.test(u);
 async function uniqueName(child){let n;do{n=slug(child)+String(1000+crypto.randomInt(9000))}while(await DB.accountBy('username',n));return n}
+// Grade 0 = PF (Pre-First). start = first week the child still has to do, like "2-3" (earlier weeks were already covered in class).
+exports.grade=v=>{if(/^\s*pf\s*$/i.test(String(v)))return 0;const n=parseInt(v);return isNaN(n)?1:Math.min(5,Math.max(0,n))};
+const startW=v=>{const m=String(v||"").match(/^(\d{1,2})-(\d)$/);return m&&+m[1]>=1&&+m[2]>=1?m[1]+"-"+m[2]:""};
 const dateMs=v=>{if(v==null||v==='')return null;if(typeof v=='number')return v;const d=Date.parse(String(v)+'T23:59:59');return isNaN(d)?null:d};
 exports.handle=async(q,s,u,p,body,send)=>{
  const P=u.pathname,ip=q.socket.remoteAddress||'?',origin=(q.headers['x-forwarded-proto']||'http')+'://'+q.headers.host;
@@ -23,7 +26,7 @@ exports.handle=async(q,s,u,p,body,send)=>{
   if(!same(b.code||'',SECRET()))return fail(401,'Wrong admin code.');send(s,{token:adminToken()});return true}
  if(P=='/api/signup'&&q.method=='POST'){const b=await body(q);if(b.website){send(s,{ok:1});return true}
   if(limited('su'+ip,5,36e5))return fail(429,'Too many requests. Please try again later.');
-  const r={id:crypto.randomBytes(4).toString('hex').toUpperCase().replace(/(.{4})/,'$1-'),parent:clean(b.parent),contact:clean(b.contact,120),child:clean(b.child,40),grade:Math.min(5,Math.max(1,+b.grade||1)),school:clean(b.school,80),status:'pending',created:Date.now()};
+  const r={id:crypto.randomBytes(4).toString('hex').toUpperCase().replace(/(.{4})/,'$1-'),parent:clean(b.parent),contact:clean(b.contact,120),child:clean(b.child,40),grade:exports.grade(b.grade),school:clean(b.school,80),status:'pending',created:Date.now()};
   if(!r.parent||!r.contact||!r.child||!r.school)return fail(400,'Please fill in every box.');
   await DB.saveAccount(r);send(s,{code:r.id});return true}
  if(P=='/api/signup-status'){if(limited('st'+ip,30,36e5))return fail(429,'Too many requests.');
@@ -34,10 +37,10 @@ exports.handle=async(q,s,u,p,body,send)=>{
   const r=await DB.accountBy('username',String(b.user||'').toLowerCase().trim());
   if(!r)return fail(401,'This username is not active yet.');if(r.status=='rejected')return fail(403,'This account was not approved.');if(r.status!='approved')return fail(403,'Your account is waiting for approval.');
   if(Date.now()>r.exp)return fail(403,'This username has expired. Please renew.');
-  send(s,{grade:r.grade,school:r.school,name:r.child,exp:r.exp,token:r.token});return true}
+  send(s,{grade:r.grade,school:r.school,name:r.child,exp:r.exp,token:r.token,start:r.start||""});return true}
  if(P=='/api/requests'){send(s,await DB.accounts());return true}
  if(P=='/api/approve'&&q.method=='POST'){const b=await body(q),r=await DB.accountBy('id',String(b.id||''));if(!r)return fail(404,'Not found');
-  if(b.grade)r.grade=Math.min(5,Math.max(1,+b.grade));if(b.school)r.school=clean(b.school,80);
+  if(b.grade!==undefined&&b.grade!=="")r.grade=exports.grade(b.grade);if(b.start!==undefined)r.start=startW(b.start);if(b.school)r.school=clean(b.school,80);
   const want=String(b.username||'').toLowerCase().trim();
   if(want){if(!validU(want))return fail(400,'Username must be 3 to 30 letters or numbers, no spaces.');const x=await DB.accountBy('username',want);if(x&&x.id!=r.id)return fail(409,'That username is already taken.');r.username=want}
   if(!r.username)r.username=await uniqueName(r.child);if(!r.token)r.token=crypto.randomBytes(12).toString('hex');
@@ -46,7 +49,7 @@ exports.handle=async(q,s,u,p,body,send)=>{
  if(P=='/api/update'&&q.method=='POST'){const b=await body(q),r=await DB.accountBy('id',String(b.id||''));if(!r)return fail(404,'Not found');const old=r.username;
   if(b.username!==undefined&&b.username!==''){const n=String(b.username).toLowerCase().trim();if(!validU(n))return fail(400,'Username must be 3 to 30 letters or numbers, no spaces.');const x=await DB.accountBy('username',n);if(x&&x.id!=r.id)return fail(409,'That username is already taken.');r.username=n}
   if(b.exp!==undefined&&b.exp!==''){const e=dateMs(b.exp);if(!e)return fail(400,'That date is not valid.');r.exp=e}
-  if(b.grade)r.grade=Math.min(5,Math.max(1,+b.grade));if(b.school)r.school=clean(b.school,80);if(b.child)r.child=clean(b.child,40);if(b.parent)r.parent=clean(b.parent);if(b.contact)r.contact=clean(b.contact,120);
+  if(b.grade!==undefined&&b.grade!=="")r.grade=exports.grade(b.grade);if(b.start!==undefined)r.start=startW(b.start);if(b.school)r.school=clean(b.school,80);if(b.child)r.child=clean(b.child,40);if(b.parent)r.parent=clean(b.parent);if(b.contact)r.contact=clean(b.contact,120);
   await DB.saveAccount(r);if(old&&r.username!=old)await DB.renameProgress(old,r.username);send(s,r);return true}
  if(P=='/api/reject'&&q.method=='POST'){const b=await body(q),r=await DB.accountBy('id',String(b.id||''));if(!r)return fail(404,'Not found');
   r.status='rejected';r.reason=clean(b.reason,200);await DB.saveAccount(r);send(s,{ok:1});return true}

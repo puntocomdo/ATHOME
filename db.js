@@ -15,7 +15,7 @@ exports.allProgress=async()=>{if(SB){const o={};for(const r of await sb('GET','p
 exports.renameProgress=async(a,b)=>{const p=await exports.progress(a);if(!p)return;await exports.saveProgress(b,p);if(SB)await sb('DELETE',`progress?username=eq.${enc(a)}`,null,'return=minimal');else{const x=rf('progress.json',{});delete x[a];wf('progress.json',x)}};
 
 // ---------- words (editable from the admin Words page) ----------
-const wclean=r=>({id:r.id,lang:String(r.lang||'en').toLowerCase().startsWith('es')?'es':'en',grade:Math.min(5,Math.max(1,parseInt(r.grade)||1)),unit:Math.max(1,parseInt(r.unit)||1),week:Math.max(1,parseInt(r.week)||1),school:String(r.school||'').trim().slice(0,80),word:String(r.word||'').trim().toLowerCase().slice(0,60),definition:String(r.definition||'').trim().slice(0,400),sentence:String(r.sentence||'').trim().slice(0,400),photo:String(r.photo||'').trim().slice(0,300),sight:r.sight===true||r.sight==='true'||r.sight===1||r.sight==='1',active:!(r.active===false||r.active==='false'||r.active===0||r.active==='0'),updated:Date.now()});
+const wclean=r=>({id:r.id,lang:String(r.lang||'en').toLowerCase().startsWith('es')?'es':'en',grade:/^\s*pf\s*$/i.test(String(r.grade))?0:Math.min(5,Math.max(0,isNaN(parseInt(r.grade))?1:parseInt(r.grade))),unit:Math.max(1,parseInt(r.unit)||1),week:Math.max(1,parseInt(r.week)||1),school:String(r.school||'').trim().slice(0,80),word:String(r.word||'').trim().toLowerCase().slice(0,60),definition:String(r.definition||'').trim().slice(0,400),sentence:String(r.sentence||'').trim().slice(0,400),photo:String(r.photo||'').trim().slice(0,300),sight:r.sight===true||r.sight==='true'||r.sight===1||r.sight==='1',active:!(r.active===false||r.active==='false'||r.active===0||r.active==='0'),updated:Date.now()});
 exports.cleanWord=wclean;
 const KEY=w=>[w.lang,w.grade,w.unit,w.week,w.word,w.school].join('|');
 const ORDER='order=lang.asc,grade.asc,unit.asc,week.asc,word.asc';
@@ -34,7 +34,7 @@ exports.words=async({lang,grade,q,limit=100,offset=0,incomplete,nophoto})=>{limi
  a.sort((x,y)=>(x.lang+x.grade*100+x.unit*10+x.week).toString().localeCompare((y.lang+y.grade*100+y.unit*10+y.week).toString())||x.word.localeCompare(y.word));return{rows:a.slice(offset,offset+limit),total:a.length}};
 exports.stats=async()=>{if(SB)return{total:await cnt(''),incomplete:await cnt(INC),nophoto:await cnt(NOP)};const a=rf('words.json',[]);return{total:a.length,incomplete:a.filter(w=>!w.definition||!w.sentence).length,nophoto:a.filter(w=>!w.photo&&!w.sight&&w.active!==false).length}};
 exports.countNoPhoto=async()=>SB?cnt(NOP):rf('words.json',[]).filter(w=>!w.photo&&!w.sight&&w.active!==false).length;
-exports.noPhotoWords=async n=>SB?sb('GET',`words?select=id,lang,word&order=id.asc&limit=${+n}${NOP}`):rf('words.json',[]).filter(w=>!w.photo&&!w.sight&&w.active!==false).slice(0,n);
+exports.noPhotoWords=async(n,after=0)=>SB?sb("GET",`words?select=id,lang,word&order=id.asc&limit=${+n}&id=gt.${+after||0}${NOP}`):rf("words.json",[]).filter(w=>!w.photo&&!w.sight&&w.active!==false&&w.id>(+after||0)).slice(0,n);
 exports.wordById=async id=>SB?((await sb('GET',`words?id=eq.${+id}&select=*&limit=1`))[0]||null):(rf('words.json',[]).find(v=>v.id==id)||null);
 const patch=async(id,o)=>{if(SB){await sb('PATCH',`words?id=eq.${+id}`,Object.assign({updated:Date.now()},o),'return=minimal');return}const a=rf('words.json',[]),x=a.find(v=>v.id==id);if(x)Object.assign(x,o);wf('words.json',a)};
 exports.setPhoto=(id,photo)=>patch(id,{photo,sight:false});exports.markSight=id=>patch(id,{sight:true});
@@ -56,11 +56,14 @@ exports.importWords=async rows=>{const ws=rows.map(wclean).filter(w=>w.word),see
  const a=rf('words.json',[]);let id=a.reduce((m,v)=>Math.max(m,v.id),0);for(const w of u){const o=slim(w),x=a.find(v=>KEY(v)==KEY(w));if(x)Object.assign(x,o);else a.push(Object.assign({definition:'',sentence:'',photo:'',sight:false,active:true},o,{id:++id}))}wf('words.json',a);return u.length};
 exports.deleteWord=async id=>{if(SB){await sb('DELETE',`words?id=eq.${+id}`,null,'return=minimal');return}wf('words.json',rf('words.json',[]).filter(v=>v.id!=id))};
 const imgUrl=p=>!p?'':/^(https?:)?\//.test(p)?p:'/photos/'+p.replace(/^photos\//,'');
+exports.GENERAL="General";
 exports.wordsFor=async(grade,school)=>{let all=[];
  if(SB){for(let off=0;;off+=1000){const b=await sb('GET',`words?select=lang,unit,week,school,word,definition,sentence,photo,sight&grade=eq.${+grade}&active=eq.true&${ORDER}&limit=1000&offset=${off}`);all=all.concat(b);if(b.length<1000)break}}
  else all=rf('words.json',[]).filter(w=>w.grade==+grade&&w.active!==false);
- all=all.filter(w=>!w.school||w.school==school);const tot={},ok={};
+ // school "General" = the standard list for schools that have no list of their own (per language)
+ const own={};for(const w of all)if(w.school&&w.school==school)own[w.lang]=1;
+ all=all.filter(w=>!w.school||(own[w.lang]?w.school==school:w.school==exports.GENERAL));const tot={},ok={};
  for(const w of all){const k=w.lang+w.unit+'-'+w.week;tot[k]=(tot[k]||0)+1;ok[k]=(ok[k]||0)+(w.definition&&w.sentence?1:0)}
  const out={en:{},es:{}};
- for(const w of all){const k=w.lang+w.unit+'-'+w.week;if(ok[k]!=tot[k])continue;const g=out[w.lang]||(out[w.lang]={}),wk=w.unit+'-'+w.week,o={w:w.word,d:w.definition,s:w.sentence};if(w.photo)o.img=imgUrl(w.photo);if(w.school)o.sc=w.school;if(w.sight)o.sg=1;(g[wk]=g[wk]||[]).push(o)}
+ for(const w of all){const k=w.lang+w.unit+'-'+w.week;if(ok[k]!=tot[k])continue;const g=out[w.lang]||(out[w.lang]={}),wk=w.unit+'-'+w.week,o={w:w.word,d:w.definition,s:w.sentence};if(w.photo)o.img=imgUrl(w.photo);if(w.school&&w.school!=exports.GENERAL)o.sc=w.school;if(w.sight)o.sg=1;(g[wk]=g[wk]||[]).push(o)}
  return out};

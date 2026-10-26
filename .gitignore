@@ -4,3 +4,4 @@ data/progress.json
 data/db.json
 .DS_Store
 logs/
+*.zip

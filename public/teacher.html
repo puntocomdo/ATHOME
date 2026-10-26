@@ -4,7 +4,7 @@
 <script>
 const _f=window.fetch.bind(window);window.fetch=(u,o={})=>{o.headers=Object.assign({'x-admin-token':localStorage.getItem('adm_tk')||''},o.headers||{});return _f(u,o).then(r=>{if(r.status==401){location='/admin.html'}return r})};
 const H=['Student','Grade','School','Level','Words correct','Weeks done','Day streak','Gems','Rounds','Last active'];let rows=[];
-(async()=>{const d=await(await fetch('/api/progress-all')).json();rows=Object.entries(d).map(([u,v])=>{const p=v.data||{};return[u,v.grade,v.school||'',Math.floor((p.total||0)/25)+1,p.total||0,(p.done||[]).length,p.streak||0,p.gems||0,p.rounds||0,p.last||'']}).sort((a,b)=>String(a[2]+a[1]+a[0]).localeCompare(b[2]+b[1]+b[0]));
+(async()=>{const d=await(await fetch('/api/progress-all')).json();rows=Object.entries(d).map(([u,v])=>{const p=v.data||{};return[u,v.grade===0?"PF":v.grade,v.school||'',Math.floor((p.total||0)/25)+1,p.total||0,(p.done||[]).length,p.streak||0,p.gems||0,p.rounds||0,p.last||'']}).sort((a,b)=>String(a[2]+a[1]+a[0]).localeCompare(b[2]+b[1]+b[0]));
 t.innerHTML='<tr>'+H.map(h=>'<th>'+h+'</th>').join('')+'</tr>'+rows.map(r=>'<tr>'+r.map(x=>'<td>'+String(x).replace(/</g,'&lt;')+'</td>').join('')+'</tr>').join('')})();
 function csv(){const b=new Blob([H.join(',')+'\n'+rows.map(r=>r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(',')).join('\n')],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='progress.csv';a.click()}
 </script>
