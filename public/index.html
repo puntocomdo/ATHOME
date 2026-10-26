@@ -2,10 +2,10 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>At Home – Word Adventure</title><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="theme-color" content="#131838">
-<link href="https://fonts.googleapis.com/css2?family=Gochi+Hand&family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Gochi+Hand&family=Fredoka:wght@500;700&family=Andika:wght@400;700&family=Lexend:wght@400;600&family=Comic+Neue:wght@400;700&family=Atkinson+Hyperlegible:wght@400;700&family=Playpen+Sans:wght@400;600&display=swap" rel="stylesheet">
 <style>
-:root{--or:#f28c28;--ye:#e5d15a;--te:#5bb0b6;--pu:#7b68b5;--pk:#f0b9ca;--cr:#fbf1de;--rd:#c9503f;--ink:#3b3358;--ok:#3aa35c;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-*{box-sizing:border-box}body{margin:0;background:#fff;color:var(--ink);font-family:"Gochi Hand",Fredoka,sans-serif;font-size:19px}
+:root{--ff:"Gochi Hand";--or:#f28c28;--ye:#e5d15a;--te:#5bb0b6;--pu:#7b68b5;--pk:#f0b9ca;--cr:#fbf1de;--rd:#c9503f;--ink:#3b3358;--ok:#3aa35c;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}body{margin:0;background:#fff;color:var(--ink);font-family:var(--ff),Fredoka,sans-serif;font-size:19px}
 .wrap{max-width:460px;margin:0 auto;position:relative;min-height:100vh;overflow-x:hidden}
 .sky{position:relative;height:104px;overflow:hidden}
 .sky .cl{position:absolute;top:-6px;left:0;width:880px;max-width:none;animation:drift 38s ease-in-out infinite alternate}
@@ -14,14 +14,14 @@
 @keyframes drift{to{transform:translateX(-420px)}}@keyframes spin{to{transform:rotate(360deg)}}@keyframes tw{50%{opacity:.2;transform:scale(.6)}}
 @keyframes bob{50%{transform:translateY(-10px)}}@keyframes fly{0%,100%{transform:translate(0,0) rotate(-2deg)}50%{transform:translate(8px,-14px) rotate(2deg)}}
 @keyframes pop{0%{transform:scale(.5)}60%{transform:scale(1.15)}100%{transform:scale(1)}}@keyframes pulse{50%{box-shadow:0 0 0 14px rgba(242,140,40,.2)}}
-main{padding:0 18px 40px}h1,h2,.ch{font-family:"Gochi Hand",Fredoka,sans-serif;font-weight:400;margin:0}
+main{padding:0 18px 40px}h1,h2,.ch{font-family:var(--ff),Fredoka,sans-serif;font-weight:400;margin:0}
 h1{font-size:34px;color:var(--pu)}p{margin:4px 0 12px;color:#7a7396;font-size:17px}
 button{font:inherit;font-weight:400;font-size:24px;border:0;border-radius:40px;padding:13px 22px;background:var(--or);color:#fff;cursor:pointer;transition:transform .1s}button:active{transform:scale(.95)}button:disabled{opacity:.4}
 button.w{display:block;width:100%;margin-top:12px}button.o{background:#fff;color:var(--pu);border:3px solid var(--pu)}
 .logo{text-align:center;font-size:76px;line-height:1;margin:6px 0 0;text-shadow:3px 3px 0 rgba(0,0,0,.08)}.kids{display:block;width:92%;margin:8px auto;animation:fly 5s ease-in-out infinite}
 .pill{background:var(--te);border-radius:40px;border:0;padding:14px 22px;width:100%;font:inherit;font-size:22px;color:#fff;text-align:center}.pill::placeholder{color:#e6f6f6}
 .top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
-.av{width:54px;height:54px;border-radius:50%;border:3px solid var(--or);object-fit:cover;background:#fff}.hello{font-family:"Gochi Hand";font-size:28px;color:#d4b41e;flex:1}
+.av{width:54px;height:54px;border-radius:50%;border:3px solid var(--or);object-fit:cover;background:#fff}.hello{font-family:var(--ff);font-size:28px;color:#d4b41e;flex:1}
 .gem{display:flex;align-items:center;gap:6px;font-weight:700;font-size:20px}.gem img{width:30px}.gem i{background:var(--te);color:#fff;border-radius:50%;width:34px;height:34px;display:grid;place-items:center;font-style:normal}
 .ban{position:relative;margin:0 0 18px;padding:18px 18px 22px 110px;background:var(--ye);border-radius:26px;min-height:150px}.ban:before{content:"";position:absolute;inset:-8px 10px auto -4px;height:60px;background:var(--pk);border-radius:26px;z-index:-1}
 .ban .ch{font-size:36px;color:var(--pu);line-height:1}.ban img{position:absolute;left:18px;top:26px;width:70px;animation:bob 2.4s infinite}.ban button{background:#fff;color:var(--rd);margin-top:14px;padding:9px 22px}
@@ -30,10 +30,10 @@ button.w{display:block;width:100%;margin-top:12px}button.o{background:#fff;color
 .wk{font-size:17px;padding:10px 8px;line-height:1.1}.wk small{display:block;font-size:12px;font-weight:500}.g{background:var(--ok)}.y{background:var(--ye);color:#5b4a00}.od{background:var(--or)}
 .none{font-size:14px;color:#9a93b6;text-align:center;padding-top:10px}.lg{font-size:12px;color:#8a83a6;text-align:center;margin-top:10px}
 .lang{background:var(--te);border-radius:26px;padding:16px;margin-bottom:14px;text-align:center}.lang .ch{color:#fff;font-size:30px;margin-bottom:10px}.lang .r{display:flex;gap:10px}.lang button{flex:1;padding:10px}.lang .on{outline:4px solid #fff}
-.shopb{background:var(--pu);width:100%;border-radius:22px;padding:18px;display:flex;justify-content:space-between;align-items:center;font-family:"Gochi Hand";font-size:34px;font-weight:400;color:var(--or)}.shopb img{width:38px}
+.shopb{background:var(--pu);width:100%;border-radius:22px;padding:18px;display:flex;justify-content:space-between;align-items:center;font-family:var(--ff);font-size:34px;font-weight:400;color:var(--or)}.shopb img{width:38px}
 .deco{display:block;width:80%;margin:18px auto 0;animation:bob 4s infinite}
 .card{background:var(--cr);border-radius:26px;padding:18px;margin-bottom:14px;text-align:center}
-.sent{background:#fff;border:3px dashed var(--te);border-radius:22px;padding:22px 14px;font:400 28px/1.3 "Gochi Hand",sans-serif;color:var(--pu)}.sent u{color:var(--or);text-decoration:none;border-bottom:4px solid var(--or)}
+.sent{background:#fff;border:3px dashed var(--te);border-radius:22px;padding:22px 14px;font:400 28px/1.3 var(--ff),sans-serif;color:var(--pu)}.sent u{color:var(--or);text-decoration:none;border-bottom:4px solid var(--or)}
 .go{display:flex;align-items:center;justify-content:center;gap:14px;width:100%;margin-top:16px;padding:14px;font-size:38px;background:linear-gradient(135deg,#3aa35c,#8ac926);border-radius:50px;box-shadow:0 8px 0 #2a7d45;animation:wig 1.6s infinite;overflow:hidden}.rk svg{width:58px;height:58px;display:block;animation:bob 1s infinite}.go.fly{animation:none}.go.fly .rk{animation:blast .75s forwards}
 @keyframes wig{0%,40%,100%{transform:rotate(0)}10%{transform:rotate(-2deg) scale(1.04)}20%{transform:rotate(2deg) scale(1.04)}}@keyframes blast{to{transform:translate(130px,-180px) scale(.5);opacity:0}}
 .mini{display:flex;gap:6px;justify-content:center;margin-top:6px}.mini button{width:auto;margin:0;padding:6px 8px;border-radius:14px;background:var(--te);font-size:13px;display:flex;flex-direction:column;align-items:center;line-height:1.1;gap:2px}.mini svg{width:22px;height:22px;fill:#fff}.mini small{font-size:13px}
@@ -44,16 +44,16 @@ button.w{display:block;width:100%;margin-top:12px}button.o{background:#fff;color
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}.stats div{background:var(--cr);border-radius:18px;padding:10px 4px;text-align:center;font-size:14px}.stats b{display:block;font-size:32px;color:var(--or);font-weight:400}
 .bgs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.bd{opacity:.35;filter:grayscale(1);text-align:center}.bd.on{opacity:1;filter:none}.bd span{display:grid;place-items:center;width:54px;height:54px;border-radius:50%;margin:0 auto 4px;background:linear-gradient(135deg,#f5c84b,#f28c28);color:#fff;font-size:22px;box-shadow:0 4px 0 #c9740f}.bd small{font-size:13px}.lvl{margin:0 0 14px}
 @keyframes rise{from{opacity:0;transform:translateY(16px)}}main>*{animation:rise .4s both}main>*:nth-child(2){animation-delay:.05s}main>*:nth-child(3){animation-delay:.1s}main>*:nth-child(4){animation-delay:.15s}main>*:nth-child(5){animation-delay:.2s}main>*:nth-child(6){animation-delay:.25s}
-.ph{width:100%;aspect-ratio:1/1;border-radius:22px;object-fit:cover;display:grid;place-items:center;font-family:"Gochi Hand";font-size:90px;color:#fff;background:linear-gradient(135deg,var(--te),var(--pu))}
+.ph{width:100%;aspect-ratio:1/1;border-radius:22px;object-fit:cover;display:grid;place-items:center;font-family:var(--ff);font-size:90px;color:#fff;background:linear-gradient(135deg,var(--te),var(--pu))}
 .ph.s{font-size:44px;border-radius:16px}.big{max-width:250px;margin:0 auto 8px;animation:bob 3s infinite}.big .ph{box-shadow:0 8px 0 rgba(0,0,0,.06)}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.grid .card{margin:0;padding:10px;cursor:pointer}.grid b{font-size:26px;font-family:"Gochi Hand";font-weight:400;display:block;margin-top:6px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.grid .card{margin:0;padding:10px;cursor:pointer}.grid b{font-size:26px;font-family:var(--ff);font-weight:400;display:block;margin-top:6px}
 .speak{width:92px;height:92px;border-radius:50%;padding:0;display:block;margin:6px auto;animation:pulse 2s infinite}.speak svg{width:48px;height:48px;fill:#fff}
 .blanks{font-size:30px;letter-spacing:5px;color:#a39dbd;margin:2px 0 10px}
-input.t{width:100%;padding:12px;font-family:"Gochi Hand";font-size:38px;letter-spacing:3px;border:4px solid var(--te);border-radius:24px;text-align:center;color:var(--pu);background:#fff}
+input.t{width:100%;padding:12px;font-family:var(--ff);font-size:38px;letter-spacing:3px;border:4px solid var(--te);border-radius:24px;text-align:center;color:var(--pu);background:#fff}
 .err{color:var(--rd);font-weight:700;min-height:24px;margin-top:6px}.bar{height:14px;background:#eee;border-radius:10px;overflow:hidden;margin-bottom:10px}.bar i{display:block;height:100%;background:var(--ok);border-radius:10px}
 .tag{font-size:16px;color:#7a7396;text-align:center}.hrt{color:var(--rd);letter-spacing:3px;font-size:20px}
-.tiles{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin:10px 0}.l{background:var(--te);color:#fff;font:400 40px "Gochi Hand";width:46px;height:54px;line-height:54px;border-radius:12px;animation:pop .4s backwards}.good .l{background:var(--ok)}.miss .l{background:var(--rd)}
-.score{font:400 70px "Gochi Hand";color:var(--or);animation:pop .5s}.row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:2px dashed #e8dfc9;font-size:20px;text-align:left}
+.tiles{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin:10px 0}.l{background:var(--te);color:#fff;font:400 40px var(--ff);width:46px;height:54px;line-height:54px;border-radius:12px;animation:pop .4s backwards}.good .l{background:var(--ok)}.miss .l{background:var(--rd)}
+.score{font:400 70px var(--ff);color:var(--or);animation:pop .5s}.row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:2px dashed #e8dfc9;font-size:20px;text-align:left}
 .shopg{display:grid;grid-template-columns:1fr 1fr;gap:12px}.shopg .card{margin:0}.shopg .av{width:90px;height:90px;margin:0 auto 8px;display:block}.shopg button{padding:8px 16px;font-size:17px}.shopg .ch{font-size:22px;color:var(--pu)}
 
 /* night theme */
@@ -100,6 +100,7 @@ body.dev-tablet{zoom:1.3}body.dev-tablet .wrap{max-width:780px}body.dev-tablet .
 body.dev-desk{zoom:1.45}body.dev-desk .wrap{max-width:900px}body.dev-desk .tabs{width:min(900px,100%)}body.dev-desk .bud{grid-template-columns:repeat(5,1fr)}
 /* practice game */
 .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.opts button{margin:0;padding:14px 8px;font-size:26px;background:#6b57c7;color:#fff;border-radius:22px;word-break:break-word}.opts button.ok{background:var(--ok);animation:pop .4s}.opts button.no{background:var(--rd)}
+.fonts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:8px 0 4px}.fonts button{margin:0;padding:8px 4px;background:#1b2150;color:#fff;border:2px solid #3a4390;border-radius:16px;box-shadow:none;display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1.1}.fonts button b{font-size:28px;font-weight:400}.fonts button small{font-size:13px;color:#aab0e0}.fonts button.on{border-color:#8aeefa;background:#2a3170}.fonts button.on small{color:#8aeefa}
 .w.p2{background:#2fb7c9;color:#10204a;margin:0 0 14px}.w.p2 svg{width:24px;height:24px;vertical-align:-5px}
 </style></head><body><div class="wrap">
 <div class="sky"><svg class="cl" viewBox="0 0 880 100" width="880" height="100"><defs><g id="c" fill="#d6edfb"><circle cx="40" cy="48" r="20"/><circle cx="68" cy="36" r="26"/><circle cx="100" cy="48" r="20"/><rect x="22" y="48" width="96" height="20" rx="10"/></g></defs><use href="#c" x="20" y="8"/><use href="#c" x="260" y="30"/><use href="#c" x="520" y="0"/><use href="#c" x="760" y="28"/></svg><svg class="sun" viewBox="0 0 64 64"><path d="M44 6a27 27 0 1 0 14 42A23 23 0 0 1 44 6z" fill="#f3e9b8"/></svg><b style="left:90px;top:44px;animation-delay:.4s">★</b><b style="left:58%;top:30px;animation-delay:1.1s">✦</b><b style="left:80%;top:62px;animation-delay:.7s">★</b><b style="left:22%;top:66px;animation-delay:1.9s">✦</b><b style="left:30px;top:20px">★</b><b style="left:46%;top:60px;animation-delay:.8s">★</b><b style="left:68%;top:18px;animation-delay:1.5s">★</b></div>
@@ -143,7 +144,13 @@ let S={user:store.get("vp_user"),lang:store.get("vp_lang")||((typeof navigator!=
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const FEM=/samantha|karen|moira|tessa|victoria|fiona|allison|ava\b|susan|zira|aria|jenny|libby|sonia|natasha|catherine|monica|mónica|paulina|lucia|lucía|marisol|sabina|helena|elvira|dalia|salome|laura|female|mujer|google us english|google español|esperanza|isabela|mia\b/i;
 const isM=n=>/(^|\W)(alex|daniel|david|mark|fred|tom|diego|jorge|juan|pablo|carlos|ryan|george|james|oliver|jaime|enrique|ricardo|guy|rishi)(\W|$)/i.test(n)||(/\bmale\b/i.test(n)&&!/female/i.test(n));
-function vlist(lg){try{return speechSynthesis.getVoices().filter(v=>String(v.lang).toLowerCase().replace("_","-").startsWith(lg))}catch(e){return[]}}
+// Only normal-sounding voices: Apple devices also ship joke voices (Bubbles, Zarvox, Bad News…), which are hidden.
+const ODD=/\b(albert|bad news|bahh|bells|boing|bubbles|cellos|good news|jester|organ|superstar|trinoids|whisper|wobble|zarvox|deranged|hysterical|princess|fred|junior|kathy|ralph)\b/i;
+const vrank=v=>(/premium|enhanced|mejorad|natural|neural|online/i.test(v.name)?0:/\b(eddy|flo|grandma|grandpa|reed|rocko|sandy|shelley)\b/i.test(v.name)?3:/google|microsoft|siri/i.test(v.name)?1:2);
+function vlist(lg){try{const seen={};return speechSynthesis.getVoices().filter(v=>String(v.lang).toLowerCase().replace("_","-").startsWith(lg)&&!ODD.test(v.name)&&!seen[v.name]&&(seen[v.name]=1)).sort((a,b)=>vrank(a)-vrank(b)||a.name.localeCompare(b.name))}catch(e){return[]}}
+const REG={US:"EE.UU.",GB:"Reino Unido",AU:"Australia",IE:"Irlanda",IN:"India",ZA:"Sudáfrica",NZ:"N. Zelanda",CA:"Canadá",ES:"España",MX:"México",AR:"Argentina",CO:"Colombia",CL:"Chile",PE:"Perú",DO:"Rep. Dom.",PR:"Puerto Rico",VE:"Venezuela",UY:"Uruguay",419:"Latinoamérica"};
+const vlabel=v=>{const n=v.name.replace(/\s*[(\-–]\s*(English|Spanish|Español|Inglés)\b.*$/i,"").replace(/^(Microsoft|Google)\s+/,""),r=String(v.lang).replace("_","-").split("-")[1];return n+(r?" · "+(S.lang=="es"?(REG[r.toUpperCase()]||r):r.toUpperCase()):"")};
+try{speechSynthesis.onvoiceschanged=()=>{if(document.querySelector(".vs"))shop()}}catch(e){}
 function voiceFor(lg){const L=vlist(lg),sel=(P&&P.voice||{})[lg];return L.find(x=>x.name==sel)||(lg=="en"?L.find(x=>/\btessa\b/i.test(x.name)):0)||L.find(x=>FEM.test(x.name)&&!isM(x.name))||L.find(x=>!isM(x.name))||L[0]}
 function speakOne(s){const lg=S.lang=="es"?"es":"en",u=new SpeechSynthesisUtterance(s),v=voiceFor(lg);if(v){u.voice=v;u.lang=v.lang}else u.lang=lg=="es"?"es-ES":"en-US";u.rate=lg=="es"?.75:.6;u.pitch=1.15;speechSynthesis.speak(u)}
 function say(t){try{speechSynthesis.cancel();setTimeout(()=>speakOne(t),80)}catch(e){}}
@@ -174,7 +181,7 @@ const push=()=>{try{if(!S.user.token)return;fetch("/api/progress",{method:"POST"
 const D0=()=>({total:0,rounds:0,streak:0,last:"",badges:[],log:[],done:[],updated:0});
 const syncDown=()=>{try{if(!S.user.token)return Promise.resolve();return Promise.race([fetch("/api/progress?user="+S.user.code+"&token="+S.user.token).then(r=>r.ok?r.json():{}).then(j=>{if(j&&j.data&&(j.data.updated||0)>(P.updated||0)){P=Object.assign(D0(),j.data);store.set("p_"+S.user.code,P)}}),new Promise(r=>setTimeout(r,1500))]).catch(()=>{})}catch(e){return Promise.resolve()}};
 const loadWords=()=>{try{if(!S.user.token)return Promise.resolve();return Promise.race([fetch("/api/my-words?user="+S.user.code+"&token="+S.user.token).then(r=>r.ok?r.json():null).then(j=>{if(j&&typeof j.start=="string"&&S.user.start!==j.start){S.user.start=j.start;store.set("vp_user",S.user)}if(j&&((j.en&&Object.keys(j.en).length)||(j.es&&Object.keys(j.es).length))){const g=S.user.grade;for(const k in WORDS)delete WORDS[k];Object.assign(WORDS,{en:{[g]:j.en||{}},es:{[g]:j.es||{}}});applyPhotos()}}),new Promise(r=>setTimeout(r,3000))]).catch(()=>{})}catch(e){return Promise.resolve()}};
-const boot=()=>{loadP();Promise.all([syncDown(),loadWords()]).then(home)};
+const boot=()=>{loadP();applyFont();Promise.all([syncDown(),loadWords()]).then(()=>{applyFont();home()})};
 function prog(){const ws=Object.keys(weeksOf()),un={};ws.forEach(w=>{const u=w.split("-")[0];(un[u]=un[u]||[0,0])[1]++;if(st(w)=="g")un[u][0]++});const H=x=>`<div class="ch" style="color:var(--pu);font-size:26px;margin-bottom:6px">${t(x)}</div>`;
  $.innerHTML=`<h1>${t("Rewards")}</h1><div class="top"><img class="av" style="width:78px;height:78px;border-color:${auc()}" src="${IMG["a_"+P.av]}" alt=""><div class="hello">${esc(name())}<small style="display:block;font-size:19px;color:var(--pu)">${t("Level")} ${lvl()} · ${ttl()}</small></div></div>${lvlBar()}
  <div class="stats"><div><b>${P.total}</b>${t("words correct")}</div><div><b>${P.streak}</b>${t("day streak")}</div><div><b>${P.rounds}</b>${t("rounds")}</div><div><b>${P.gems}</b>${t("gems")}</div></div>
@@ -202,7 +209,7 @@ async function enter(){
   u=store.get("act_"+c);if(!u){u={code:c,grade:CODES[c],exp:Date.now()+DAYS_VALID*864e5};store.set("act_"+c,u)}u.grade=CODES[c];u.school=STUDENTS[c].school}
  if(Date.now()>u.exp)return login(t("This username has expired. Please renew."));
  S.user=u;store.set("vp_user",u);boot()}
-function logout(){S.user=null;store.set("vp_user",null);login()}
+function logout(){S.user=null;try{document.documentElement.style.removeProperty("--ff")}catch(e){}store.set("vp_user",null);login()}
 const weeksOf=()=>{const g=((WORDS[S.lang]||{})[S.user.grade])||{},o={};for(const k in g){const l=g[k].filter(x=>!x.sc||x.sc==S.user.school);if(l.length)o[k]=l}return o};
 // Weeks before the start week the admin chose were already covered in class, so they count as done.
 const covered=w=>{const s=S.user&&S.user.start;if(!s)return false;const[a,b]=w.split("-").map(Number),[c,d]=s.split("-").map(Number);return a<c||(a==c&&b<d)};
@@ -376,9 +383,16 @@ function shop(m){const cur=S.pick&&P.own.includes(S.pick)?S.pick:P.av;S.pick=cur
  <div class="seg w3">${[["gi","Girls"],["bo","Boys"],["an","Animals"],["all","Everyone"]].map(x=>`<button class="${f==x[0]?"on":""}" onclick="S.f='${x[0]}';shop()">${t(x[1])}</button>`).join("")}</div>
  <div class="bud">${list.map(a=>{const own=P.own.includes(a.id);return`<div class="bc ${cur==a.id?"sel":""} ${a.c>=30?"leg":a.c>=14?"rare":""}" onclick="${own?`pick('${a.id}')`:`buy('${a.id}')`}"><img src="${IMG["a_"+a.id]}" alt=""><b>${t(a.n)}</b>${own?(P.av==a.id?`<i class="ck">${ICO.check}</i>`:""):`<span class="pr">${a.c?`<img src="${IMG.gem}" alt="">${a.c}`:t("Free")}</span>`}</div>`}).join("")}</div>
  <div class="aur"><div><b>${t("Magic aura")}</b><br><small>${t(AURA[au][1])}</small></div><div>${AURA.map((x,i)=>`<button class="dot ${i==au?"on":""}" style="background:${x[0]}" onclick="P.aura=${i};save();shop()"></button>`).join("")}</div></div>
- <div class="aur" style="margin-top:6px"><div><b>${t("Voice")}</b><br><small>${t("Pick the voice you like best")}</small></div><div><select class="vs" onchange="setVoice(this.value)">${vlist(S.lang=="es"?"es":"en").map(v=>`<option value="${esc(v.name)}" ${v===voiceFor(S.lang=="es"?"es":"en")?"selected":""}>${esc(v.name)}</option>`).join("")}</select> <button class="dot" style="background:#8aeefa;color:#10204a;font-size:16px" onclick="say(t('Hello! Let\'s read together.'))">${ICO.spk}</button></div></div>
+ <div class="aur" style="margin-top:6px"><div><b>${t("Voice")}</b><br><small>${t("Pick the voice you like best")}</small></div><div><select class="vs" onchange="setVoice(this.value)">${vlist(S.lang=="es"?"es":"en").map(v=>`<option value="${esc(v.name)}" ${v===voiceFor(S.lang=="es"?"es":"en")?"selected":""}>${esc(vlabel(v))}</option>`).join("")}</select> <button class="dot" style="background:#8aeefa;color:#10204a;font-size:16px" onclick="say(t('Hello! Let\'s read together.'))">${ICO.spk}</button></div></div>
+ <div class="aur" style="margin-top:6px"><div><b>${t("Letters")}</b><br><small>${t("Pick the letters you like best")}</small></div></div><div class="fonts">${FONTS.map(f=>`<button class="${fontOf()[0]==f[0]?"on":""}" style="font-family:${f[2].replace(/"/g,"'")}" onclick="setFont('${f[0]}')"><b>Aa</b><small>${t(f[1])}</small></button>`).join("")}</div>
  <button class="sv" onclick="P.av=S.pick;save();shop(t('Saved!'))">${t("Save my buddy")} ${ICO.check}</button>${navHtml("bud")}`}
 function setVoice(n){const lg=S.lang=="es"?"es":"en";P.voice=Object.assign({},P.voice,{[lg]:n});save();say(t("Hello! Let's read together."))}
+// Letter style the child picks on the Buddy screen (saved with their progress). All are Google Fonts loaded in <head>.
+const FONTS=[["gochi","Fun",'"Gochi Hand"'],["andika","Easy reading","Andika"],["playpen","School",'"Playpen Sans"'],["comic","Comic",'"Comic Neue"'],["lexend","Clear","Lexend"],["fredoka","Round","Fredoka"],["atkinson","Extra clear",'"Atkinson Hyperlegible"']];
+Object.assign(ES,{"Letters":"Letra","Pick the letters you like best":"Elige la letra que más te guste","Fun":"Divertida","Easy reading":"Fácil de leer","School":"Escolar","Comic":"Cómic","Clear":"Clara","Round":"Redondita","Extra clear":"Muy clara"});
+const fontOf=()=>FONTS.find(f=>f[0]==(P&&P.font))||FONTS[0];
+function applyFont(){try{document.documentElement.style.setProperty("--ff",fontOf()[2])}catch(e){}}
+function setFont(id){P.font=id;save();applyFont();shop()}
 function pick(id){S.pick=id;shop()}
 function buy(id){const a=AV.find(x=>x.id==id);if(P.gems<a.c)return shop(t("Not enough gems yet!"));P.gems-=a.c;P.own.push(id);P.av=id;S.pick=id;save();shop(t("You unlocked")+" "+t(a.n)+"!")}
 function useAv(id){P.av=id;save();shop()}
