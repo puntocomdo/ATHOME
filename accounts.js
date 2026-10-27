@@ -15,7 +15,7 @@ exports.okToken=async(user,token)=>{if(!token||!user)return false;const r=await 
 const validU=u=>/^[a-z0-9]{3,30}$/.test(u);
 async function uniqueName(child){let n;do{n=slug(child)+String(1000+crypto.randomInt(9000))}while(await DB.accountBy('username',n));return n}
 // Grade 0 = PF (Pre-First). start = first week the child still has to do, like "2-3" (earlier weeks were already covered in class).
-exports.grade=v=>{if(/^\s*pf\s*$/i.test(String(v)))return 0;const n=parseInt(v);return isNaN(n)?1:Math.min(5,Math.max(0,n))};
+exports.grade=v=>{if(/^\s*pf\s*$/i.test(String(v)))return 0;const n=parseInt(v);return isNaN(n)?1:Math.min(6,Math.max(0,n))};
 const startW=v=>{const m=String(v||"").match(/^(\d{1,2})-(\d)$/);return m&&+m[1]>=1&&+m[2]>=1?m[1]+"-"+m[2]:""};
 const dateMs=v=>{if(v==null||v==='')return null;if(typeof v=='number')return v;const d=Date.parse(String(v)+'T23:59:59');return isNaN(d)?null:d};
 exports.handle=async(q,s,u,p,body,send)=>{

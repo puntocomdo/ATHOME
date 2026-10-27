@@ -17,7 +17,7 @@ tr.new td{background:#f2fbf5}tr.dirty td{background:#fff8e6}.th{width:44px;heigh
 <header><img src="/logo.webp" alt="At Home"><nav><a class=nv href="/admin" data-k=nav1></a><a class="nv on" href="/words" data-k=nav4></a><a class=nv href="/teacher" data-k=nav2></a></nav><div class=lang><button id=l-es onclick="L('es')">ES</button><button id=l-en onclick="L('en')">EN</button></div></header>
 <main><h1 data-k=h></h1><p class=sub id=sum></p>
 <div class=bar><select id=fl onchange="off=0;load()"><option value="" data-k=allL></option><option value=en>English</option><option value=es>Español</option></select>
-<select id=fg onchange="off=0;load()"><option value="" data-k=allG></option><option value=0>PF</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+<select id=fg onchange="off=0;load()"><option value="" data-k=allG></option><option value=0>PF</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select>
 <select id=fs onchange="off=0;try{localStorage.setItem('w_sc',this.value)}catch(e){}load()"><option value="*" data-k=allS></option></select>
 <select id=ff onchange="off=0;load()"><option value="" data-k=fAll></option><option value=incomplete data-k=fInc></option><option value=nophoto data-k=fNo></option></select><select id=ps onchange="PAGE=+this.value;off=0;load()"><option>100</option><option>250</option><option>500</option><option>1000</option></select>
 <input type=search id=q data-k=ph oninput="clearTimeout(tm);tm=setTimeout(()=>{off=0;load()},350)">
@@ -70,7 +70,7 @@ async function pgo(i){const w=rows[i];$('pr').innerHTML='…';try{const r=await 
  window.__hits=j;$('pr').innerHTML=j.map((h,n)=>`<img src="${h.thumb}" style="width:88px;height:88px;object-fit:cover;border-radius:10px;cursor:pointer" onclick="pset(${i},${n})">`).join('')||T('pickNone')}catch(e){$('pr').textContent=T('err')}}
 async function pset(i,n){$('pr').innerHTML='…';try{await post('/api/photo-set',{id:rows[i].id,url:window.__hits[n].full});close_();toast(T('saved'));load()}catch(e){$('pr').textContent=T('err')}}
 const sel=(id,opts,v)=>`<select id="${id}" onchange="dirty(this)">${opts.map(o=>`<option value="${o[0]}" ${String(o[0])==String(v)?'selected':''}>${o[1]}</option>`).join('')}</select>`;
-const LANGS=[['en','English'],['es','Español']],GR=[[0,'PF']].concat([1,2,3,4,5].map(n=>[n,n]));
+const LANGS=[['en','English'],['es','Español']],GR=[[0,'PF']].concat([1,2,3,4,5,6].map(n=>[n,n]));
 function rowHtml(w,i){const f=n=>`f_${i}_${n}`,cl=i=='n'?'new':'';
  return `<tr class="${cl}" id="r_${i}"><td>${i=='n'?'':`<input type=checkbox class=pick data-id="${w.id}" ${SEL.has(+w.id)?'checked':''} onchange="pick1(this)">`}</td><td class=w2>${sel(f('lang'),LANGS,w.lang)}</td><td class=w1>${sel(f('grade'),GR,w.grade)}</td><td class=w1><input id="${f('unit')}" type=number min=1 value="${w.unit}" oninput="dirty(this)"></td><td class=w1><input id="${f('week')}" type=number min=1 value="${w.week}" oninput="dirty(this)"></td>
  <td style="min-width:120px"><input id="${f('word')}" value="${H(w.word)}" oninput="dirty(this)"></td><td style="min-width:220px"><textarea id="${f('definition')}" oninput="dirty(this)">${H(w.definition)}</textarea></td><td style="min-width:220px"><textarea id="${f('sentence')}" oninput="dirty(this)">${H(w.sentence)}</textarea></td>

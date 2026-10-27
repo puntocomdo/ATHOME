@@ -32,7 +32,7 @@ let lg=localStorage.getItem('adm_lg')||'es',tab='pending',all=[];const T=k=>TT[l
 function L(x){lg=x;localStorage.setItem('adm_lg',x);document.documentElement.lang=x;document.querySelectorAll('[data-k]').forEach(e=>{const v=T(e.dataset.k);if(e.tagName=='INPUT')e.placeholder=v;else e.textContent=v});$('l-es').className=x=='es'?'on':'';$('l-en').className=x=='en'?'on':'';draw()}
 const msg=r=>`Hola ${r.parent}, la cuenta de ${r.child} fue aprobada.\nUsuario: ${r.username}\nEntra en: ${ORG}\nVálida por 1 año.\n\nHello ${r.parent}, ${r.child}'s account is approved.\nUsername: ${r.username}\nOpen: ${ORG}\nValid for 1 year.`;
 // Grade 0 = PF. WhatsApp needs the country code: a 10-digit number (809/829/849, US) gets a 1 in front.
-const GL=g=>+g===0?'PF':g,gOpts=v=>[0,1,2,3,4,5].map(n=>`<option value=${n} ${n==v?'selected':''}>${GL(n)}</option>`).join('');
+const GL=g=>+g===0?'PF':g,gOpts=v=>[0,1,2,3,4,5,6].map(n=>`<option value=${n} ${n==v?'selected':''}>${GL(n)}</option>`).join('');
 const waNum=c=>{let d=String(c||'').replace(/\D/g,'').replace(/^00/,'');if(d.length==10)d='1'+d;return d.length>=11&&d.length<=15?d:''};
 const waLink=(c,m)=>{const d=waNum(c);return d?`https://wa.me/${d}?text=${encodeURIComponent(m)}`:''};
 // Start week: classes began in September, so a new child usually starts mid-year. Suggest the current school week.

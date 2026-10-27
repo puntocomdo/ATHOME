@@ -306,7 +306,7 @@ function signupScreen(m,v){v=v||{};$.innerHTML=`<h1 style="text-align:center">${
  <label>${t("Parent or guardian name")}</label><input id="sp" value="${esc(v.p||"")}" autocomplete="name">
  <label>${t("Email or WhatsApp number")}</label><input id="sc" value="${esc(v.c||"")}">
  <label>${t("Child's first name")}</label><input id="sn" value="${esc(v.n||"")}">
- <label>${t("Grade")}</label><select id="sg">${[0,1,2,3,4,5].map(g=>`<option value="${g}" ${(v.g==null||v.g===""?g===1:+v.g===g)?"selected":""}>${g?g:"PF"}</option>`).join("")}</select>
+ <label>${t("Grade")}</label><select id="sg">${[0,1,2,3,4,5,6].map(g=>`<option value="${g}" ${(v.g==null||v.g===""?g===1:+v.g===g)?"selected":""}>${g?g:"PF"}</option>`).join("")}</select>
  <label>${t("School")}</label><select id="ss"><option>Colegio Continental</option><option value="other">${t("Other school")}</option></select><input id="so" placeholder="${t("School name")}" style="display:none;margin-top:8px">
  <div class="err">${m||""}</div><button class="sv" onclick="signupSend()">${t("Send request")}</button></div><button class="w o" onclick="login()">${t("Back")}</button>${waBtn()}`;
  const ss=document.getElementById("ss");ss.onchange=function(){document.getElementById("so").style.display=this.value=="other"?"block":"none"}}
