@@ -56,6 +56,8 @@ exports.importWords=async rows=>{const ws=rows.map(wclean).filter(w=>w.word),see
  if(SB){const g={};for(const w of u){const o=slim(w),k=Object.keys(o).join();(g[k]=g[k]||[]).push(o)}
   for(const l of Object.values(g))for(let i=0;i<l.length;i+=300)await sb('POST','words?on_conflict=lang,grade,unit,week,word,school',l.slice(i,i+300),'resolution=merge-duplicates,return=minimal');return u.length}
  const a=rf('words.json',[]);let id=a.reduce((m,v)=>Math.max(m,v.id),0);for(const w of u){const o=slim(w),x=a.find(v=>KEY(v)==KEY(w));if(x)Object.assign(x,o);else a.push(Object.assign({definition:'',sentence:'',photo:'',sight:false,active:true},o,{id:++id}))}wf('words.json',a);return u.length};
+// Bulk delete from the Words page (up to 500 ids per call).
+exports.deleteWords=async ids=>{ids=[...new Set(ids.map(Number).filter(n=>n>0))];if(!ids.length)return 0;if(SB){await sb('DELETE',`words?id=in.(${ids.join(',')})`,null,'return=minimal');return ids.length}const a=rf('words.json',[]),k=new Set(ids),b=a.filter(v=>!k.has(+v.id));wf('words.json',b);return a.length-b.length};
 exports.deleteWord=async id=>{if(SB){await sb('DELETE',`words?id=eq.${+id}`,null,'return=minimal');return}wf('words.json',rf('words.json',[]).filter(v=>v.id!=id))};
 const imgUrl=p=>!p?'':/^(https?:)?\//.test(p)?p:'/photos/'+p.replace(/^photos\//,'');
 exports.GENERAL="General";
